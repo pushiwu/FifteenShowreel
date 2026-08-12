@@ -37,19 +37,19 @@ function App() {
         <>
           <Nav />
           <main className="site-main">
-            <SectionReveal variant="hero" immediate>
+            <SectionReveal immediate>
               <Hero />
             </SectionReveal>
-            <SectionReveal variant="rise">
+            <SectionReveal>
               <About />
             </SectionReveal>
-            <SectionReveal variant="wipe">
+            <SectionReveal>
               <Projects />
             </SectionReveal>
-            <SectionReveal variant="settle">
+            <SectionReveal>
               <Expertise />
             </SectionReveal>
-            <SectionReveal variant="rise">
+            <SectionReveal>
               <Resume />
             </SectionReveal>
             <Contact />

@@ -1,11 +1,19 @@
 .section-reveal {
   position: relative;
+  z-index: 1;
   width: 100%;
-  will-change: opacity, transform, clip-path;
+  isolation: isolate;
+}
+
+.section-reveal__surface {
+  position: relative;
+  width: 100%;
+  transform-origin: center top;
+  will-change: opacity, transform, clip-path, filter;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .section-reveal {
+  .section-reveal__surface {
     will-change: auto;
   }
 }

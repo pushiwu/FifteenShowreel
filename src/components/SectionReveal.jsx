@@ -1,117 +1,128 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import "./SectionReveal.css";
 
-const variants = {
-  hero: {
-    from: { autoAlpha: 0, y: 26, scale: 0.992 },
-    to: { autoAlpha: 1, y: 0, scale: 1, duration: 1.45 },
-  },
-  rise: {
-    from: { autoAlpha: 0, y: 54 },
-    to: { autoAlpha: 1, y: 0, duration: 1.2 },
-  },
-  wipe: {
-    from: { autoAlpha: 0, y: 34, clipPath: "inset(0% 0% 14% 0%)" },
-    to: {
-      autoAlpha: 1,
-      y: 0,
-      clipPath: "inset(0% 0% 0% 0%)",
-      duration: 1.35,
-    },
-  },
-  settle: {
-    from: { autoAlpha: 0, y: 38, scale: 0.997 },
-    to: { autoAlpha: 1, y: 0, scale: 1, duration: 1.25 },
-  },
-};
+gsap.registerPlugin(ScrollTrigger);
 
 export default function SectionReveal({
   children,
-  variant = "rise",
   immediate = false,
   className = "",
 }) {
   const rootRef = useRef(null);
+  const surfaceRef = useRef(null);
 
   useLayoutEffect(() => {
     const root = rootRef.current;
-    if (!root) return undefined;
+    const surface = surfaceRef.current;
+    if (!root || !surface) return undefined;
 
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
     if (reducedMotion) {
-      gsap.set(root, { clearProps: "all" });
+      gsap.set(surface, { clearProps: "all" });
       root.dataset.revealed = "true";
       return undefined;
     }
 
-    const config = variants[variant] ?? variants.rise;
     const mobile = window.matchMedia("(max-width: 700px)").matches;
-    const from = { ...config.from };
-    if (mobile && typeof from.y === "number") from.y *= 0.55;
-
-    gsap.set(root, from);
-
-    const reveal = () => {
-      if (
-        root.dataset.revealed === "true" ||
-        root.dataset.revealed === "animating"
-      ) {
+    const context = gsap.context(() => {
+      if (immediate) {
+        gsap.fromTo(
+          surface,
+          {
+            autoAlpha: 0,
+            y: mobile ? 18 : 28,
+            clipPath: "inset(0% 0% 8% 0% round 18px)",
+            filter: "brightness(0.72)",
+          },
+          {
+            autoAlpha: 1,
+            y: 0,
+            clipPath: "inset(0% 0% 0% 0% round 0px)",
+            filter: "brightness(1)",
+            duration: 1.45,
+            ease: "power3.out",
+            onComplete: () => {
+              root.dataset.revealed = "true";
+            },
+          },
+        );
         return;
       }
 
-      root.dataset.revealed = "animating";
-      gsap.to(root, {
-        ...config.to,
-        ease: "power3.out",
-        clearProps: "transform,opacity,visibility,clipPath",
-        onComplete: () => {
-          root.dataset.revealed = "true";
+      const reveal = gsap.fromTo(
+        surface,
+        {
+          autoAlpha: 0.12,
+          y: mobile ? 34 : 72,
+          scale: mobile ? 0.995 : 0.988,
+          clipPath: mobile
+            ? "inset(9% 0% 0% 0% round 16px)"
+            : "inset(13% 1.2% 0% 1.2% round 24px)",
+          filter: "brightness(0.64)",
         },
-      });
-    };
+        {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          clipPath: "inset(0% 0% 0% 0% round 0px)",
+          filter: "brightness(1)",
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            start: "top 94%",
+            end: mobile ? "top 38%" : "top 28%",
+            scrub: mobile ? 0.7 : 1.05,
+            invalidateOnRefresh: true,
+            onLeave: () => {
+              root.dataset.revealed = "true";
+            },
+            onEnterBack: () => {
+              root.dataset.revealed = "scrolling";
+            },
+          },
+        },
+      );
 
-    const stopIncompleteReveal = () => {
-      gsap.killTweensOf(root);
-      if (root.dataset.revealed === "animating") {
-        delete root.dataset.revealed;
-      }
-    };
+      const exitParallax = gsap.fromTo(
+        surface,
+        { yPercent: 0 },
+        {
+          yPercent: mobile ? -1.2 : -2.4,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            start: "bottom 72%",
+            end: "bottom top",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
 
-    if (immediate) {
-      const frame = requestAnimationFrame(reveal);
+      root.dataset.revealed = "scrolling";
+
       return () => {
-        cancelAnimationFrame(frame);
-        stopIncompleteReveal();
+        reveal.kill();
+        exitParallax.kill();
       };
-    }
+    }, root);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          reveal();
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.14, rootMargin: "0px 0px -8% 0px" },
-    );
-    observer.observe(root);
-
-    return () => {
-      observer.disconnect();
-      stopIncompleteReveal();
-    };
-  }, [immediate, variant]);
+    return () => context.revert();
+  }, [immediate]);
 
   return (
     <div
       ref={rootRef}
-      className={`section-reveal section-reveal--${variant} ${className}`.trim()}
+      className={`section-reveal ${className}`.trim()}
     >
-      {children}
+      <div ref={surfaceRef} className="section-reveal__surface">
+        {children}
+      </div>
     </div>
   );
 }

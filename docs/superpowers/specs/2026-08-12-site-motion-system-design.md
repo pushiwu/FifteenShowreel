@@ -20,9 +20,12 @@ the first time it enters the viewport and never replays during the same page vis
 - Mount the normal site only when the opening has completed so Hero text effects do
   not finish behind the overlay.
 - Reveal Hero immediately after the opening handoff.
-- Observe About, Projects, Expertise, and Resume independently.
-- Animate each section once with restrained opacity, vertical movement, and optional
-  clipping or scale based on the section's visual character.
+- Drive About, Projects, Expertise, and Resume with independent ScrollTrigger
+  timelines that share the same curtain reveal language.
+- Reveal each section by opening its clip, lifting it into place, and restoring
+  brightness as its top travels through the viewport.
+- Keep long sections in normal document flow and apply only subtle exit parallax so
+  Projects and sticky Resume content retain their existing behavior.
 - Shorten movement on mobile and settle immediately for reduced motion.
 
 ## Contact Curtain
