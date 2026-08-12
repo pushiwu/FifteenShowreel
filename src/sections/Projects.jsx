@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import GlareHover from "../components/GlareHover";
 import TextReveal from "../components/TextReveal";
 import { projects } from "../data/projects";
 import {
@@ -239,7 +240,8 @@ export default function Projects() {
               const isActive = offset === 0;
 
               return (
-                <button
+                <GlareHover
+                  as="button"
                   key={project.id}
                   type="button"
                   className={`projects-orbit-item ${isActive ? "is-active" : ""} ${
@@ -258,6 +260,16 @@ export default function Projects() {
                     "--orbit-width": `${width}px`,
                     display: isVisible ? "block" : "none",
                   }}
+                  width="var(--orbit-width)"
+                  height="auto"
+                  background="transparent"
+                  borderRadius="4px"
+                  borderColor="transparent"
+                  glareColor="#d7dbda"
+                  glareOpacity={isActive ? 0.22 : 0.14}
+                  glareAngle={-30}
+                  glareSize={290}
+                  transitionDuration={850}
                 >
                   <span className="projects-orbit-image-wrap">
                     <ProjectThumbnail project={project} />
@@ -293,7 +305,7 @@ export default function Projects() {
                       />
                     </span>
                   </span>
-                </button>
+                </GlareHover>
               );
             })}
           </div>
@@ -369,12 +381,23 @@ export default function Projects() {
             </div>
             <div className="projects-text-only-list">
               {textOnlyProjects.map((project, index) => (
-                <button
+                <GlareHover
+                  as="button"
                   key={project.id}
                   type="button"
                   className="projects-text-only-item"
                   onClick={() => setOpenedProjectId(project.id)}
                   aria-label={`${project.title} / ${project.titleEn}`}
+                  width="100%"
+                  height="auto"
+                  background="transparent"
+                  borderRadius="0px"
+                  borderColor="transparent"
+                  glareColor="#d9d9d9"
+                  glareOpacity={0.13}
+                  glareAngle={-28}
+                  glareSize={250}
+                  transitionDuration={900}
                 >
                   <span className="projects-text-only-index">
                     {String(index + 1).padStart(2, "0")}
@@ -390,7 +413,7 @@ export default function Projects() {
                   <span className="projects-text-only-arrow" aria-hidden="true">
                     &gt;
                   </span>
-                </button>
+                </GlareHover>
               ))}
             </div>
           </section>

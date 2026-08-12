@@ -1,4 +1,5 @@
 import "./About.css";
+import GlareHover from "../components/GlareHover";
 import TextReveal from "../components/TextReveal";
 
 const overviewLinks = [
@@ -63,7 +64,22 @@ export default function About() {
 
           <nav className="about-overview-links" aria-label="Portfolio overview">
             {overviewLinks.map((item) => (
-              <a className="about-overview-link" href={item.href} key={item.href}>
+              <GlareHover
+                as="a"
+                className="about-overview-link"
+                href={item.href}
+                key={item.href}
+                width="100%"
+                height="auto"
+                background="transparent"
+                borderRadius="0px"
+                borderColor="transparent"
+                glareColor="#d9d9d9"
+                glareOpacity={0.14}
+                glareAngle={-28}
+                glareSize={240}
+                transitionDuration={900}
+              >
                 <span className="about-overview-number">
                   <TextReveal text={item.number} animateOn="view" sequential={false} speed={14} />
                 </span>
@@ -78,7 +94,7 @@ export default function About() {
                 <span className="about-overview-arrow" aria-hidden="true">
                   &gt;
                 </span>
-              </a>
+              </GlareHover>
             ))}
           </nav>
         </div>

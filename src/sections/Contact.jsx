@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import GlareHover from "../components/GlareHover";
 import "./Contact.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -11,62 +12,6 @@ const methods = [
   { label: "\u90ae\u7bb1", value: "2493627661@qq.com", href: "mailto:2493627661@qq.com" },
   { label: "\u5fae\u4fe1", value: "17674570906", href: "#" },
 ];
-
-function MagneticLink({ children, className = "", ...props }) {
-  const linkRef = useRef(null);
-
-  useLayoutEffect(() => {
-    const link = linkRef.current;
-    if (!link) return undefined;
-
-    const finePointer = window.matchMedia("(pointer: fine)").matches;
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (!finePointer || reducedMotion) return undefined;
-
-    const onMove = (event) => {
-      const bounds = link.getBoundingClientRect();
-      const x = event.clientX - bounds.left - bounds.width / 2;
-      const y = event.clientY - bounds.top - bounds.height / 2;
-
-      gsap.to(link, {
-        x: x * 0.16,
-        y: y * 0.22,
-        scale: 1.018,
-        duration: 0.45,
-        ease: "power3.out",
-        overwrite: "auto",
-      });
-    };
-
-    const onLeave = () => {
-      gsap.to(link, {
-        x: 0,
-        y: 0,
-        scale: 1,
-        duration: 0.9,
-        ease: "elastic.out(1, 0.42)",
-        overwrite: "auto",
-      });
-    };
-
-    link.addEventListener("pointermove", onMove);
-    link.addEventListener("pointerleave", onLeave);
-
-    return () => {
-      link.removeEventListener("pointermove", onMove);
-      link.removeEventListener("pointerleave", onLeave);
-      gsap.killTweensOf(link);
-    };
-  }, []);
-
-  return (
-    <a ref={linkRef} className={className} {...props}>
-      {children}
-    </a>
-  );
-}
 
 export default function Contact() {
   const wrapperRef = useRef(null);
@@ -173,14 +118,25 @@ export default function Contact() {
 
           <div className="contact-methods">
             {methods.map((item) => (
-              <MagneticLink
+              <GlareHover
+                as="a"
                 className="contact-method"
                 href={item.href}
                 key={item.label}
+                width="100%"
+                height="auto"
+                background="linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015))"
+                borderRadius="999px"
+                borderColor="rgba(255, 255, 255, 0.1)"
+                glareColor="#e3e3e3"
+                glareOpacity={0.16}
+                glareAngle={-28}
+                glareSize={260}
+                transitionDuration={900}
               >
                 <span className="contact-method-label">{item.label}</span>
                 <span className="contact-method-value">{item.value}</span>
-              </MagneticLink>
+              </GlareHover>
             ))}
           </div>
 

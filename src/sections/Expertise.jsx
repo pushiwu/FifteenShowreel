@@ -1,4 +1,5 @@
 import "./Expertise.css";
+import GlareHover from "../components/GlareHover";
 import TextReveal from "../components/TextReveal";
 
 const expertise = [
@@ -63,7 +64,21 @@ export default function Expertise() {
         </p>
         <div className="expertise-grid">
           {expertise.map((item) => (
-            <article className="expertise-card" key={item.title}>
+            <GlareHover
+              as="article"
+              className="expertise-card"
+              key={item.title}
+              width="100%"
+              height="auto"
+              background="transparent"
+              borderRadius="2px"
+              borderColor="transparent"
+              glareColor="#d7d7d7"
+              glareOpacity={0.11}
+              glareAngle={-32}
+              glareSize={260}
+              transitionDuration={950}
+            >
               <p className="expertise-english">
                 <TextReveal text={item.english} animateOn="view" sequential={false} speed={14} />
               </p>
@@ -80,7 +95,7 @@ export default function Expertise() {
                   </li>
                 ))}
               </ul>
-            </article>
+            </GlareHover>
           ))}
         </div>
       </div>

@@ -39,6 +39,16 @@ the first time it enters the viewport and never replays during the same page vis
 - Do not import the reference component's product copy, marquee, download controls,
   branding, Tailwind utilities, shadcn structure, or TypeScript requirements.
 
+## Surface Hover
+
+- Use one reusable React Bits `GlareHover` surface for card-shaped interactions.
+- Apply the same restrained gray sweep to About overview links, project cards,
+  text-only project records, expertise cards, and contact methods.
+- Preserve each element's native `a`, `button`, or `article` semantics and existing
+  image zoom, text reveal, focus, and click behavior.
+- Keep navigation, category tabs, modal controls, and the back-to-top button on their
+  existing lightweight feedback rather than applying glare indiscriminately.
+
 ## Verification
 
 - Check opening, handoff, body scroll restoration, and one-time section behavior.
