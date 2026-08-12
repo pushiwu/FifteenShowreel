@@ -462,8 +462,8 @@ export const projects = [
     institutionEn: "Hunan University of Arts and Crafts",
     format: "\u77ed\u7247\u7535\u5f71",
     formatEn: "Short Film",
-    image: "/projects/tangled/tangled-poster.jpg",
-    poster: "/projects/tangled/tangled-poster.jpg",
+    image: "/projects/tangled/tangled-poster.png",
+    poster: "/projects/tangled/tangled-poster.png",
     video: "/projects/tangled/tangled.mp4",
   },
   {
