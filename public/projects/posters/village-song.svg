@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Where the Village Song Resounds</title>
+  <desc id="desc">Static poster for the promotional film Where the Village Song Resounds.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#8ca3a0"/>
+      <stop offset=".5" stop-color="#d5b07a"/>
+      <stop offset="1" stop-color="#171b18"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#sky)"/>
+  <path d="M0 520 230 350 430 515 640 300 900 530 1060 400 1200 505V800H0Z" fill="#24342d" opacity=".9"/>
+  <path d="M0 615c190-92 270-82 435-8 205 92 340 2 765-70v263H0Z" fill="#0e1714"/>
+  <circle cx="870" cy="190" r="106" fill="#f4d49c" opacity=".55"/>
+  <text x="72" y="100" fill="#f7e5c6" font-family="Arial, sans-serif" font-size="28" letter-spacing="7">PROMOTIONAL FILM</text>
+  <text x="72" y="700" fill="#fff8ea" font-family="Georgia, serif" font-size="54">Where the Village Song Resounds</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Wind on Qixia Road</title>
+  <desc id="desc">Static poster for the graduation season music video Wind on Qixia Road.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#26343c"/>
+      <stop offset=".55" stop-color="#b48b68"/>
+      <stop offset="1" stop-color="#0c1216"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <path d="M0 550c180-80 320-80 480 0s300 82 720-78" fill="none" stroke="#f5d5ad" stroke-width="6" opacity=".7"/>
+  <path d="M0 605c180-80 320-80 480 0s300 82 720-78" fill="none" stroke="#f5d5ad" stroke-width="2" opacity=".55"/>
+  <path d="M0 660c180-80 320-80 480 0s300 82 720-78" fill="none" stroke="#f5d5ad" stroke-width="1" opacity=".4"/>
+  <text x="78" y="104" fill="#f5d5ad" font-family="Arial, sans-serif" font-size="27" letter-spacing="7">GRADUATION SEASON MV</text>
+  <text x="78" y="700" fill="#fff8eb" font-family="Georgia, serif" font-size="66">Wind on Qixia Road</text>
+</svg>

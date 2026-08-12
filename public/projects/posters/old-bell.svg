@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Old Bell</title>
+  <desc id="desc">Static poster for the short film Old Bell.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#202324"/>
+      <stop offset=".65" stop-color="#0e1010"/>
+      <stop offset="1" stop-color="#050606"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx=".5" cy=".25" r=".55">
+      <stop offset="0" stop-color="#d6a866" stop-opacity=".8"/>
+      <stop offset="1" stop-color="#d6a866" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect width="1200" height="800" fill="url(#lamp)"/>
+  <path d="M460 205h280l46 365H414z" fill="#0a0b0b" stroke="#d6a866" stroke-width="6"/>
+  <path d="M428 570h344l-38 55H466z" fill="#0a0b0b" stroke="#d6a866" stroke-width="5"/>
+  <circle cx="600" cy="360" r="24" fill="#d6a866"/>
+  <text x="80" y="110" fill="#d6a866" font-family="Arial, sans-serif" font-size="30" letter-spacing="8">GAFFER / NARRATIVE SHORT</text>
+  <text x="80" y="700" fill="#fff4e4" font-family="Georgia, serif" font-size="72">Old Bell</text>
+</svg>

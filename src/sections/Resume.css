@@ -1,0 +1,91 @@
+.resume {
+  padding: 124px 0 132px;
+  border-top: 1px solid var(--line);
+}
+
+.resume-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
+  gap: 70px;
+}
+
+.resume-heading {
+  position: sticky;
+  top: 140px;
+  align-self: start;
+}
+
+.resume-content {
+  min-width: 0;
+}
+
+.resume-profile-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.resume-awards {
+  display: grid;
+}
+
+.resume-award {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 18px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.resume-award-index {
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+
+.resume-award h3 {
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.resume-award p {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .resume {
+    padding: 88px 0;
+  }
+
+  .resume-layout {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+
+  .resume-heading {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .resume-profile-line {
+    display: grid;
+    gap: 8px;
+  }
+
+  .resume-award {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 12px;
+  }
+}
