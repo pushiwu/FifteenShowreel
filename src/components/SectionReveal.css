@@ -1,0 +1,11 @@
+.section-reveal {
+  position: relative;
+  width: 100%;
+  will-change: opacity, transform, clip-path;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-reveal {
+    will-change: auto;
+  }
+}

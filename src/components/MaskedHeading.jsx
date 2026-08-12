@@ -20,6 +20,7 @@ const MaskedHeading = ({
   reveal = "rise",
   duration = 1.1,
   stagger = 0.09,
+  delay = 0,
   trigger = "view",
   align = "center",
   weight = 700,
@@ -225,6 +226,7 @@ const MaskedHeading = ({
             y: 0,
             duration,
             stagger,
+            delay,
             ease: "power4.out",
             overwrite: "auto",
           },
@@ -235,6 +237,7 @@ const MaskedHeading = ({
         tweenRef.current = gsap.to(state, {
           progress: 0,
           duration,
+          delay,
           ease: "power3.inOut",
           overwrite: "auto",
           onUpdate: () => {
@@ -250,6 +253,7 @@ const MaskedHeading = ({
             opacity: 1,
             scale: 1,
             duration,
+            delay,
             ease: "power3.out",
             overwrite: "auto",
           },
@@ -288,7 +292,7 @@ const MaskedHeading = ({
 
     play();
     return () => tweenRef.current?.kill();
-  }, [duration, reveal, stagger, trigger, words]);
+  }, [delay, duration, reveal, stagger, trigger, words]);
 
   const Tag = tag;
 

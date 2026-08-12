@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import Nav from './components/Nav';
 import LiquidEther from './components/LiquidEther';
 import IntroOverlay from './components/IntroOverlay';
+import SectionReveal from './components/SectionReveal';
 import Hero from './sections/Hero';
 import About from './sections/About';
 import Projects from './sections/Projects';
@@ -10,9 +12,11 @@ import Contact from './sections/Contact';
 import './styles/global.css';
 
 function App() {
+  const [introComplete, setIntroComplete] = useState(false);
+
   return (
     <>
-      <IntroOverlay />
+      {!introComplete && <IntroOverlay onComplete={() => setIntroComplete(true)} />}
       <div className="site-dither" aria-hidden="true">
         <div style={{ width: "1080px", height: "1080px", position: "relative" }}>
           <LiquidEther
@@ -29,15 +33,29 @@ function App() {
           />
         </div>
       </div>
-      <Nav />
-      <main className="site-main">
-        <Hero />
-        <About />
-        <Projects />
-        <Expertise />
-        <Resume />
-        <Contact />
-      </main>
+      {introComplete && (
+        <>
+          <Nav />
+          <main className="site-main">
+            <SectionReveal variant="hero" immediate>
+              <Hero />
+            </SectionReveal>
+            <SectionReveal variant="rise">
+              <About />
+            </SectionReveal>
+            <SectionReveal variant="wipe">
+              <Projects />
+            </SectionReveal>
+            <SectionReveal variant="settle">
+              <Expertise />
+            </SectionReveal>
+            <SectionReveal variant="rise">
+              <Resume />
+            </SectionReveal>
+            <Contact />
+          </main>
+        </>
+      )}
     </>
   );
 }

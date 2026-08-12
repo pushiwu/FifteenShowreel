@@ -46,9 +46,47 @@
   text-transform: lowercase;
 }
 
+.intro-overlay__lockup {
+  width: min(88vw, 1280px);
+  display: grid;
+  justify-items: center;
+  gap: 30px;
+}
+
+.intro-overlay__credit {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  color: rgba(242, 242, 242, 0.68);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-align: center;
+}
+
+.intro-overlay__rule {
+  width: min(170px, 34vw);
+  height: 1px;
+  background: rgba(242, 242, 242, 0.32);
+}
+
 @media (max-width: 700px) {
   .intro-overlay .masked-heading {
     width: min(92vw, 700px);
+  }
+
+  .intro-overlay__lockup {
+    width: min(92vw, 700px);
+    gap: 22px;
+  }
+
+  .intro-overlay__credit {
+    max-width: 86vw;
+    font-size: 9px;
+    line-height: 1.5;
+    letter-spacing: 0.16em;
   }
 }
 
