@@ -1,0 +1,57 @@
+.orbit-container {
+  position: relative;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  overflow: hidden;
+}
+
+.orbit-scaling-container {
+  position: relative;
+}
+
+.orbit-scaling-container--responsive {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+}
+
+.orbit-rotation-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+}
+
+.orbit-path-svg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.orbit-item {
+  position: absolute;
+  user-select: none;
+  will-change: offset-distance, opacity;
+}
+
+.orbit-item__content {
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.orbit-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-item,
+  .orbit-item__content {
+    will-change: auto;
+  }
+}

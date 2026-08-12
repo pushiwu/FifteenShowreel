@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import GlareHover from "../components/GlareHover";
+import OrbitImages from "../components/OrbitImages";
 import TextReveal from "../components/TextReveal";
 import { projects } from "../data/projects";
 import {
@@ -8,10 +9,15 @@ import {
   getMouseDirectionStep,
   MOUSE_SWITCH_COOLDOWN,
 } from "../utils/mouseDirection";
+import {
+  canSwitchWheelDirection,
+  getWheelDirectionStep,
+  normalizeWheelDelta,
+  WHEEL_SWITCH_COOLDOWN,
+} from "../utils/wheelDirection";
 import "./Projects.css";
 
 const AUTOPLAY_DELAY = 2000;
-const VISIBLE_RADIUS = 4;
 
 function ProjectThumbnail({ project }) {
   if (!project.poster && !project.image) {
@@ -32,12 +38,6 @@ function ProjectThumbnail({ project }) {
   );
 }
 
-function getCircularOffset(index, activeIndex, total) {
-  const raw = index - activeIndex;
-  const wrapped = ((raw + total + Math.floor(total / 2)) % total) - Math.floor(total / 2);
-  return wrapped;
-}
-
 export default function Projects() {
   const [viewMode, setViewMode] = useState("core");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -48,6 +48,11 @@ export default function Projects() {
   );
   const lastMouseXRef = useRef(null);
   const lastMouseSwitchAtRef = useRef(null);
+  const mouseGestureLockedRef = useRef(false);
+  const mouseGestureTimerRef = useRef(null);
+  const wheelDeltaRef = useRef(0);
+  const wheelResetTimerRef = useRef(null);
+  const lastWheelSwitchAtRef = useRef(null);
 
   const visibleProjects = useMemo(() => {
     if (viewMode === "all") {
@@ -117,6 +122,18 @@ export default function Projects() {
     };
   }, [openedProjectId]);
 
+  useEffect(
+    () => () => {
+      if (mouseGestureTimerRef.current !== null) {
+        window.clearTimeout(mouseGestureTimerRef.current);
+      }
+      if (wheelResetTimerRef.current !== null) {
+        window.clearTimeout(wheelResetTimerRef.current);
+      }
+    },
+    [],
+  );
+
   const activeProject = useMemo(
     () => visibleProjects[activeIndex] ?? visibleProjects[0] ?? projects[0],
     [activeIndex, visibleProjects]
@@ -136,18 +153,35 @@ export default function Projects() {
     setIsPaused(true);
     lastMouseXRef.current = null;
     lastMouseSwitchAtRef.current = null;
+    mouseGestureLockedRef.current = false;
   };
 
   const handleStageMouseLeave = () => {
     setIsPaused(false);
     lastMouseXRef.current = null;
     lastMouseSwitchAtRef.current = null;
+    mouseGestureLockedRef.current = false;
+    if (mouseGestureTimerRef.current !== null) {
+      window.clearTimeout(mouseGestureTimerRef.current);
+      mouseGestureTimerRef.current = null;
+    }
+    wheelDeltaRef.current = 0;
+    lastWheelSwitchAtRef.current = null;
   };
 
   const handleProjectsMouseMove = (event) => {
     if (visibleProjects.length <= 1 || openedProjectId !== null) return;
 
     const currentMouseX = event.clientX;
+    if (mouseGestureTimerRef.current !== null) {
+      window.clearTimeout(mouseGestureTimerRef.current);
+    }
+    mouseGestureTimerRef.current = window.setTimeout(() => {
+      mouseGestureLockedRef.current = false;
+      lastMouseXRef.current = null;
+      mouseGestureTimerRef.current = null;
+    }, 180);
+
     if (lastMouseXRef.current === null) {
       lastMouseXRef.current = currentMouseX;
       return;
@@ -157,6 +191,11 @@ export default function Projects() {
     const directionStep = getMouseDirectionStep(deltaX);
 
     if (directionStep === 0) return;
+
+    if (mouseGestureLockedRef.current) {
+      lastMouseXRef.current = currentMouseX;
+      return;
+    }
 
     const now = performance.now();
     const elapsedMs =
@@ -168,10 +207,50 @@ export default function Projects() {
 
     lastMouseXRef.current = currentMouseX;
     lastMouseSwitchAtRef.current = now;
+    mouseGestureLockedRef.current = true;
     setActiveIndex(
       (current) =>
         (current + directionStep + visibleProjects.length) %
         visibleProjects.length
+    );
+  };
+
+  const handleProjectsWheel = (event) => {
+    if (visibleProjects.length <= 1 || openedProjectId !== null) return;
+
+    const rawDelta =
+      Math.abs(event.deltaY) >= Math.abs(event.deltaX)
+        ? event.deltaY
+        : event.deltaX;
+    wheelDeltaRef.current += normalizeWheelDelta(
+      rawDelta,
+      event.deltaMode,
+      window.innerHeight,
+    );
+
+    if (wheelResetTimerRef.current !== null) {
+      window.clearTimeout(wheelResetTimerRef.current);
+    }
+    wheelResetTimerRef.current = window.setTimeout(() => {
+      wheelDeltaRef.current = 0;
+      wheelResetTimerRef.current = null;
+    }, 180);
+
+    const now = performance.now();
+    const elapsedMs =
+      lastWheelSwitchAtRef.current === null
+        ? WHEEL_SWITCH_COOLDOWN
+        : now - lastWheelSwitchAtRef.current;
+
+    if (!canSwitchWheelDirection(wheelDeltaRef.current, elapsedMs)) return;
+
+    const directionStep = getWheelDirectionStep(wheelDeltaRef.current);
+    wheelDeltaRef.current = 0;
+    lastWheelSwitchAtRef.current = now;
+    setActiveIndex(
+      (current) =>
+        (current + directionStep + visibleProjects.length) %
+        visibleProjects.length,
     );
   };
 
@@ -224,22 +303,24 @@ export default function Projects() {
             className="projects-curve"
             aria-label="Past works carousel"
             onMouseMove={handleProjectsMouseMove}
+            onWheel={handleProjectsWheel}
           >
-            {visibleProjects.map((project, index) => {
-              const offset = getCircularOffset(index, activeIndex, visibleProjects.length);
-              const distance = Math.abs(offset);
-              const isVisible = distance <= VISIBLE_RADIUS;
-              const direction = offset === 0 ? 0 : offset > 0 ? 1 : -1;
-
-              const x = offset * 240;
-              const y = distance * distance * 34 + distance * 8;
-              const scale = Math.max(0.52, 1 - distance * 0.11);
-              const opacity = Math.max(0, 1 - distance * 0.18);
-              const rotate = direction * Math.min(24, 8 + distance * 4);
-              const width = Math.max(168, 330 - distance * 22);
-              const isActive = offset === 0;
-
-              return (
+            <OrbitImages
+              items={visibleProjects}
+              activeIndex={activeIndex}
+              baseWidth={1400}
+              baseHeight={760}
+              radiusX={600}
+              radiusY={215}
+              rotation={-7}
+              itemWidth={320}
+              itemHeight={462}
+              activeOffset={10}
+              compactActiveOffset={76}
+              transitionDuration={0.95}
+              visibleRadius={4}
+              responsive
+              renderItem={(project, index, { isActive, isVisible }) => (
                 <GlareHover
                   as="button"
                   key={project.id}
@@ -250,18 +331,9 @@ export default function Projects() {
                   onClick={() => handleProjectClick(project, index)}
                   aria-pressed={isActive}
                   aria-label={`${project.title} / ${project.titleEn}`}
-                  style={{
-                    "--orbit-x": `${x}px`,
-                    "--orbit-y": `${y}px`,
-                    "--orbit-scale": scale,
-                    "--orbit-rotate": `${rotate}deg`,
-                    "--orbit-opacity": opacity,
-                    "--orbit-z": String(100 - distance),
-                    "--orbit-width": `${width}px`,
-                    display: isVisible ? "block" : "none",
-                  }}
-                  width="var(--orbit-width)"
-                  height="auto"
+                  tabIndex={isVisible ? 0 : -1}
+                  width="100%"
+                  height="100%"
                   background="transparent"
                   borderRadius="4px"
                   borderColor="transparent"
@@ -306,8 +378,8 @@ export default function Projects() {
                     </span>
                   </span>
                 </GlareHover>
-              );
-            })}
+              )}
+            />
           </div>
 
           <div className="projects-stage-detail" aria-live="polite">

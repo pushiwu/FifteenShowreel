@@ -49,6 +49,18 @@ the first time it enters the viewport and never replays during the same page vis
 - Keep navigation, category tabs, modal controls, and the back-to-top button on their
   existing lightweight feedback rather than applying glare indiscriminately.
 
+## Project Orbit
+
+- Replace the hand-authored card arc with a reusable React Bits `OrbitImages`
+  component driven by CSS motion paths and Motion values.
+- Keep the project carousel controlled by the existing active project index so
+  autoplay, pointer-direction switching, category changes, details, and modal opening
+  continue to use one source of truth.
+- Render the existing interactive project cards inside the orbit rather than reducing
+  them to decorative images.
+- Allow a wheel gesture over the orbit to switch one project in the gesture direction
+  after an accumulated threshold and cooldown, without preventing normal page scroll.
+
 ## Verification
 
 - Check opening, handoff, body scroll restoration, and one-time section behavior.

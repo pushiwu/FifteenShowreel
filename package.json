@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:assets": "node scripts/check-project-assets.mjs",
-    "test:interaction": "node --test scripts/test-mouse-direction.mjs",
+    "test:interaction": "node --test scripts/test-mouse-direction.mjs scripts/test-wheel-direction.mjs",
     "test:data": "node --test scripts/test-project-data.mjs"
   },
   "dependencies": {
