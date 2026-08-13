@@ -11,7 +11,7 @@
     "test:interaction": "node --test scripts/test-mouse-direction.mjs scripts/test-wheel-direction.mjs",
     "test:data": "node --test scripts/test-project-data.mjs",
     "test:orbit": "node --test scripts/test-orbit-layout.mjs",
-    "test:performance": "node --test scripts/test-animation-policy.mjs scripts/test-performance-budget.mjs"
+    "test:performance": "node --test scripts/test-animation-policy.mjs scripts/test-ascii-portrait.mjs scripts/test-performance-budget.mjs"
   },
   "dependencies": {
     "gsap": "^3.15.0",
