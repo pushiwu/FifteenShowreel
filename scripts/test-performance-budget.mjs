@@ -57,6 +57,34 @@ test("人物图与所有作品卡片使用轻量网页资源", () => {
   });
 });
 
+test("About portrait uses cached Canvas2D rendering with a safe image fallback", () => {
+  const componentSource = readFileSync(
+    path.join(root, "src/components/AsciiPortrait.jsx"),
+    "utf8",
+  );
+
+  assert.match(componentSource, /getContext\("2d"/);
+  assert.match(componentSource, /ResizeObserver/);
+  assert.match(componentSource, /IntersectionObserver/);
+  assert.match(componentSource, /visibilitychange/);
+  assert.match(componentSource, /prefers-reduced-motion: reduce/);
+  assert.match(componentSource, /getImageData/);
+  assert.match(componentSource, /requestAnimationFrame/);
+  assert.match(componentSource, /shouldRunPortraitAnimation/);
+  assert.doesNotMatch(componentSource, /WebGL|three|pixi/i);
+});
+
+test("About integrates the ASCII portrait without replacing its accessible fallback", () => {
+  const aboutSource = readFileSync(path.join(root, "src/sections/About.jsx"), "utf8");
+
+  assert.match(
+    aboutSource,
+    /import AsciiPortrait from "\.\.\/components\/AsciiPortrait"/,
+  );
+  assert.match(aboutSource, /<AsciiPortrait/);
+  assert.doesNotMatch(aboutSource, /<img[\s\S]*className="about-image"/);
+});
+
 test("诗项目画廊不再直接加载 25 MB 原始 PNG", () => {
   const poem = projects.find((project) => project.id === 15);
   assert.ok(poem?.galleryImages?.length > 0);

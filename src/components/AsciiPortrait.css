@@ -1,0 +1,42 @@
+.ascii-portrait {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ascii-portrait__image,
+.ascii-portrait__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ascii-portrait__image {
+  object-fit: contain;
+  object-position: center;
+  transition: opacity 500ms ease;
+}
+
+.ascii-portrait__canvas {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 650ms ease;
+}
+
+.ascii-portrait.is-ready .ascii-portrait__image {
+  opacity: 0;
+}
+
+.ascii-portrait.is-ready .ascii-portrait__canvas {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ascii-portrait__image,
+  .ascii-portrait__canvas {
+    transition: none;
+  }
+}

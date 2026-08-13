@@ -1,4 +1,5 @@
 import "./About.css";
+import AsciiPortrait from "../components/AsciiPortrait";
 import GlareHover from "../components/GlareHover";
 import TextReveal from "../components/TextReveal";
 
@@ -111,12 +112,11 @@ export default function About() {
         <div className="about-media">
           <div className="about-visual">
             <span className="about-visual-glow" aria-hidden="true" />
-            <img
+            <AsciiPortrait
               className="about-image"
+              imageClassName="about-image-fallback"
               src="/about-profile.webp"
               alt="\u84b2\u5e08\u6b66"
-              loading="lazy"
-              decoding="async"
             />
             <span className="about-visual-caption">
               <TextReveal
