@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useState } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Nav from './components/Nav';
 import LiquidEther from './components/LiquidEther';
 import IntroOverlay from './components/IntroOverlay';
@@ -18,6 +19,7 @@ function App() {
 
   return (
     <>
+      <SpeedInsights />
       {!introComplete && <IntroOverlay onComplete={handleIntroComplete} />}
       {introComplete ? (
         <div className="site-dither" aria-hidden="true">
