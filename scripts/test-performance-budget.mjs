@@ -102,3 +102,12 @@ test("字体样式从文档头预连接加载而不是 CSS 阻塞导入", () => 
   assert.match(html, /rel="preconnect" href="https:\/\/fonts\.googleapis\.com"/);
   assert.match(html, /fonts\.googleapis\.com\/css2\?/);
 });
+
+test("Contact exposes the supplied Xiaohongshu link and WeChat QR asset", () => {
+  const contactSource = readFileSync(path.join(root, "src/sections/Contact.jsx"), "utf8");
+
+  assert.match(contactSource, /https:\/\/xhslink\.cn\/m\/8BjFMwU35im/);
+  assert.match(contactSource, /contact-wechat-qr\.jpg/);
+  assert.match(contactSource, /noopener noreferrer/);
+  assertAssetBudget("/contact-wechat-qr.jpg", 200 * 1024);
+});

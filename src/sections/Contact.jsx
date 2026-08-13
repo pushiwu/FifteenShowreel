@@ -11,6 +11,12 @@ const methods = [
   { label: "\u7535\u8bdd", value: "15886690296", href: "tel:15886690296" },
   { label: "\u90ae\u7bb1", value: "2493627661@qq.com", href: "mailto:2493627661@qq.com" },
   { label: "\u5fae\u4fe1", value: "17674570906", href: "#" },
+  {
+    label: "\u5c0f\u7ea2\u4e66",
+    value: "Fifteen Pu",
+    href: "https://xhslink.cn/m/8BjFMwU35im",
+    external: true,
+  },
 ];
 
 export default function Contact() {
@@ -107,6 +113,8 @@ export default function Contact() {
                 className="contact-method"
                 href={item.href}
                 key={item.label}
+                target={item.external ? "_blank" : undefined}
+                rel={item.external ? "noopener noreferrer" : undefined}
                 width="100%"
                 height="auto"
                 background="linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015))"
@@ -122,6 +130,29 @@ export default function Contact() {
                 <span className="contact-method-value">{item.value}</span>
               </GlareHover>
             ))}
+          </div>
+
+          <div className="contact-wechat-card">
+            <div className="contact-wechat-copy">
+              <span className="contact-method-label">WeChat</span>
+              <strong>Scan to connect</strong>
+              <p>通过微信二维码联系我，适合项目合作与现场沟通。</p>
+            </div>
+            <a
+              className="contact-wechat-qr-link"
+              href="/contact-wechat-qr.jpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open WeChat QR code"
+            >
+              <img
+                className="contact-wechat-qr"
+                src="/contact-wechat-qr.jpg"
+                alt="WeChat QR code"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
           </div>
 
           <div className="contact-bottom">
