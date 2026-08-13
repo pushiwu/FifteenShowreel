@@ -1,4 +1,5 @@
 import DecryptedText from "./DecryptedText";
+import { shouldAnimateTextReveal } from "../utils/animationPolicy";
 
 export default function TextReveal({
   text,
@@ -12,6 +13,14 @@ export default function TextReveal({
   encryptedClassName = "",
   ...props
 }) {
+  if (!shouldAnimateTextReveal(text, animateOn)) {
+    return (
+      <span className={`text-reveal ${parentClassName}`.trim()} {...props}>
+        <span className={`text-reveal-char ${className}`.trim()}>{text}</span>
+      </span>
+    );
+  }
+
   return (
     <DecryptedText
       text={text}

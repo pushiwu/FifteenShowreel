@@ -122,8 +122,18 @@ const MaskedHeading = ({
     let animationFrame = 0;
     let last = performance.now();
     let clock = 0;
+    let isPageVisible = !document.hidden;
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reducedMotion = motionQuery.matches;
+
+    const schedule = () => {
+      if (animationFrame || reducedMotion || !isPageVisible) return;
+      animationFrame = requestAnimationFrame(frame);
+    };
 
     const frame = (now) => {
+      animationFrame = 0;
+      if (reducedMotion || !isPageVisible) return;
       const delta = Math.min(0.05, (now - last) / 1000);
       last = now;
       clock += delta;
@@ -137,7 +147,26 @@ const MaskedHeading = ({
       offset.x += (offset.tx + driftX - offset.x) * ease;
       offset.y += (offset.ty + driftY - offset.y) * ease;
       place();
-      animationFrame = requestAnimationFrame(frame);
+      schedule();
+    };
+
+    const handleVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+      last = performance.now();
+      schedule();
+    };
+
+    const handleMotionPreference = (event) => {
+      reducedMotion = event.matches;
+      if (reducedMotion) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+        offsetRef.current = { x: 0, y: 0, tx: 0, ty: 0 };
+        place();
+      } else {
+        last = performance.now();
+        schedule();
+      }
     };
 
     const onPointerMove = (event) => {
@@ -158,13 +187,17 @@ const MaskedHeading = ({
 
     root.addEventListener("pointermove", onPointerMove);
     root.addEventListener("pointerleave", onPointerLeave);
-    animationFrame = requestAnimationFrame(frame);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    motionQuery.addEventListener?.("change", handleMotionPreference);
+    schedule();
 
     return () => {
       cancelAnimationFrame(animationFrame);
       resizeObserver.disconnect();
       root.removeEventListener("pointermove", onPointerMove);
       root.removeEventListener("pointerleave", onPointerLeave);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      motionQuery.removeEventListener?.("change", handleMotionPreference);
     };
   }, [place, sync]);
 
@@ -361,7 +394,7 @@ const MaskedHeading = ({
                 muted
                 loop
                 playsInline
-                preload="auto"
+                preload="metadata"
                 aria-hidden="true"
               />
             ) : (

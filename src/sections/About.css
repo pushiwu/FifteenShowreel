@@ -35,6 +35,18 @@
   line-height: 1.95;
 }
 
+.about-copy-pair {
+  display: grid;
+  gap: 8px;
+}
+
+.about-copy-en {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.75;
+  letter-spacing: 0.015em;
+}
+
 .about-media {
   grid-area: media;
   position: relative;

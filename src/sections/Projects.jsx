@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import GlareHover from "../components/GlareHover";
 import OrbitImages from "../components/OrbitImages";
@@ -13,11 +19,59 @@ import {
   canSwitchWheelDirection,
   getWheelDirectionStep,
   normalizeWheelDelta,
+  shouldCaptureProjectWheel,
   WHEEL_SWITCH_COOLDOWN,
 } from "../utils/wheelDirection";
+import {
+  getOrbitDatasetKey,
+  getSafeActiveIndex,
+} from "../utils/orbitLayout";
+import { shouldRunProjectAutoplay } from "../utils/animationPolicy";
 import "./Projects.css";
 
-const AUTOPLAY_DELAY = 2000;
+const AUTOPLAY_DELAY = 4200;
+
+const orbitLayouts = {
+  core: {
+    baseWidth: 1440,
+    baseHeight: 900,
+    radiusX: 520,
+    radiusY: 160,
+    itemWidth: 300,
+    itemHeight: 420,
+    compactBaseHeight: 700,
+    compactRadiusX: 230,
+    compactRadiusY: 120,
+    compactItemWidth: 220,
+    compactItemHeight: 320,
+  },
+  extended: {
+    baseWidth: 1440,
+    baseHeight: 920,
+    radiusX: 540,
+    radiusY: 170,
+    itemWidth: 250,
+    itemHeight: 360,
+    compactBaseHeight: 700,
+    compactRadiusX: 245,
+    compactRadiusY: 125,
+    compactItemWidth: 200,
+    compactItemHeight: 300,
+  },
+  all: {
+    baseWidth: 1440,
+    baseHeight: 900,
+    radiusX: 610,
+    radiusY: 240,
+    itemWidth: 190,
+    itemHeight: 270,
+    compactBaseHeight: 700,
+    compactRadiusX: 290,
+    compactRadiusY: 165,
+    compactItemWidth: 220,
+    compactItemHeight: 320,
+  },
+};
 
 function ProjectThumbnail({ project }) {
   if (!project.poster && !project.image) {
@@ -31,7 +85,7 @@ function ProjectThumbnail({ project }) {
   return (
     <img
       className="projects-orbit-image"
-      src={project.poster ?? project.image}
+      src={project.thumbnail ?? project.poster ?? project.image}
       alt={project.title}
       loading="lazy"
     />
@@ -46,6 +100,13 @@ export default function Projects() {
   const [isDocumentVisible, setIsDocumentVisible] = useState(
     () => !document.hidden
   );
+  const [isSectionInView, setIsSectionInView] = useState(false);
+  const [isCompactViewport, setIsCompactViewport] = useState(
+    () => window.matchMedia("(max-width: 720px)").matches,
+  );
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
   const lastMouseXRef = useRef(null);
   const lastMouseSwitchAtRef = useRef(null);
   const mouseGestureLockedRef = useRef(false);
@@ -53,6 +114,8 @@ export default function Projects() {
   const wheelDeltaRef = useRef(0);
   const wheelResetTimerRef = useRef(null);
   const lastWheelSwitchAtRef = useRef(null);
+  const projectsCurveRef = useRef(null);
+  const projectsSectionRef = useRef(null);
 
   const visibleProjects = useMemo(() => {
     if (viewMode === "all") {
@@ -65,10 +128,11 @@ export default function Projects() {
     () => projects.filter((project) => project.textOnly),
     []
   );
-
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [viewMode]);
+  const orbitLayout = orbitLayouts[viewMode];
+  const safeActiveIndex = getSafeActiveIndex(
+    activeIndex,
+    visibleProjects.length,
+  );
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -82,24 +146,63 @@ export default function Projects() {
   }, []);
 
   useEffect(() => {
-    if (
-      isPaused ||
-      !isDocumentVisible ||
-      visibleProjects.length <= 1 ||
-      openedProjectId !== null
-    ) {
+    const section = projectsSectionRef.current;
+    if (!section) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsSectionInView(entry.isIntersecting),
+      { rootMargin: "0px", threshold: 0.15 },
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 720px)");
+    const handleChange = (event) => setIsCompactViewport(event.matches);
+
+    media.addEventListener("change", handleChange);
+    return () => media.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handleChange = (event) => setPrefersReducedMotion(event.matches);
+
+    media.addEventListener?.("change", handleChange);
+    return () => media.removeEventListener?.("change", handleChange);
+  }, []);
+
+  useEffect(() => {
+    if (!shouldRunProjectAutoplay({
+      isPaused,
+      isDocumentVisible,
+      isSectionInView,
+      isCompactAllView: viewMode === "all" && isCompactViewport,
+      itemCount: visibleProjects.length,
+      isModalOpen: openedProjectId !== null,
+      prefersReducedMotion,
+    })) {
       return undefined;
     }
 
     const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % visibleProjects.length);
+      setActiveIndex(
+        (current) =>
+          (getSafeActiveIndex(current, visibleProjects.length) + 1) %
+          visibleProjects.length,
+      );
     }, AUTOPLAY_DELAY);
 
     return () => window.clearInterval(timer);
   }, [
     isDocumentVisible,
+    isSectionInView,
+    isCompactViewport,
     isPaused,
     openedProjectId,
+    prefersReducedMotion,
+    viewMode,
     visibleProjects.length,
   ]);
 
@@ -135,8 +238,8 @@ export default function Projects() {
   );
 
   const activeProject = useMemo(
-    () => visibleProjects[activeIndex] ?? visibleProjects[0] ?? projects[0],
-    [activeIndex, visibleProjects]
+    () => visibleProjects[safeActiveIndex] ?? visibleProjects[0] ?? projects[0],
+    [safeActiveIndex, visibleProjects]
   );
 
   const openedProject = useMemo(
@@ -147,6 +250,12 @@ export default function Projects() {
   const handleProjectClick = (project, index) => {
     setActiveIndex(index);
     setOpenedProjectId(project.id);
+  };
+
+  const handleViewModeChange = (nextViewMode) => {
+    if (nextViewMode === viewMode) return;
+    setActiveIndex(0);
+    setViewMode(nextViewMode);
   };
 
   const handleStageMouseEnter = () => {
@@ -170,7 +279,13 @@ export default function Projects() {
   };
 
   const handleProjectsMouseMove = (event) => {
-    if (visibleProjects.length <= 1 || openedProjectId !== null) return;
+    if (
+      visibleProjects.length <= 1 ||
+      openedProjectId !== null ||
+      (viewMode === "all" && isCompactViewport)
+    ) {
+      return;
+    }
 
     const currentMouseX = event.clientX;
     if (mouseGestureTimerRef.current !== null) {
@@ -210,13 +325,28 @@ export default function Projects() {
     mouseGestureLockedRef.current = true;
     setActiveIndex(
       (current) =>
-        (current + directionStep + visibleProjects.length) %
+        (getSafeActiveIndex(current, visibleProjects.length) +
+          directionStep +
+          visibleProjects.length) %
         visibleProjects.length
     );
   };
 
-  const handleProjectsWheel = (event) => {
-    if (visibleProjects.length <= 1 || openedProjectId !== null) return;
+  const handleProjectsWheel = useEffectEvent((event) => {
+    const isGridLayout = viewMode === "all" && isCompactViewport;
+    if (
+      !shouldCaptureProjectWheel({
+        itemCount: visibleProjects.length,
+        isModalOpen: openedProjectId !== null,
+        isGridLayout,
+        deltaX: event.deltaX,
+        deltaY: event.deltaY,
+      })
+    ) {
+      return;
+    }
+
+    event.preventDefault();
 
     const rawDelta =
       Math.abs(event.deltaY) >= Math.abs(event.deltaX)
@@ -249,36 +379,33 @@ export default function Projects() {
     lastWheelSwitchAtRef.current = now;
     setActiveIndex(
       (current) =>
-        (current + directionStep + visibleProjects.length) %
+        (getSafeActiveIndex(current, visibleProjects.length) +
+          directionStep +
+          visibleProjects.length) %
         visibleProjects.length,
     );
-  };
+  });
+
+  useEffect(() => {
+    const curve = projectsCurveRef.current;
+    if (!curve) return undefined;
+
+    const handleWheel = (event) => handleProjectsWheel(event);
+    curve.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      curve.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   return (
-    <section className="projects" id="projects">
+    <section ref={projectsSectionRef} className="projects" id="projects">
       <div className="container">
         <div
           className="projects-stage"
           onMouseEnter={handleStageMouseEnter}
           onMouseLeave={handleStageMouseLeave}
         >
-          <div className="projects-stage-copy">
-            <p className="section-label projects-stage-label">
-              <TextReveal text="Selected Works / \u7cbe\u9009\u4f5c\u54c1" animateOn="view" speed={18} />
-            </p>
-            <h2 className="section-title projects-stage-title">
-              <TextReveal text={"\u4f5c\u54c1"} animateOn="view" speed={16} />
-            </h2>
-            <p className="projects-stage-subtitle">
-              <TextReveal
-                text="Selected works / Image, light, space and the state between them"
-                animateOn="view"
-                sequential={false}
-                speed={12}
-              />
-            </p>
-          </div>
-
           <div className="projects-view-switcher" role="tablist" aria-label="Project categories">
             {[
               { value: "core", label: "\u6838\u5fc3\u4f5c\u54c1", en: "Core" },
@@ -291,7 +418,7 @@ export default function Projects() {
                 role="tab"
                 aria-selected={viewMode === option.value}
                 className={`projects-view-tab ${viewMode === option.value ? "is-active" : ""}`}
-                onClick={() => setViewMode(option.value)}
+                onClick={() => handleViewModeChange(option.value)}
               >
                 <span>{option.label}</span>
                 <small>{option.en}</small>
@@ -300,25 +427,32 @@ export default function Projects() {
           </div>
 
           <div
+            ref={projectsCurveRef}
             className="projects-curve"
             aria-label="Past works carousel"
             onMouseMove={handleProjectsMouseMove}
-            onWheel={handleProjectsWheel}
           >
             <OrbitImages
+              key={getOrbitDatasetKey(viewMode, visibleProjects)}
               items={visibleProjects}
-              activeIndex={activeIndex}
-              baseWidth={1400}
-              baseHeight={760}
-              radiusX={600}
-              radiusY={215}
-              rotation={-7}
-              itemWidth={320}
-              itemHeight={462}
-              activeOffset={10}
-              compactActiveOffset={76}
+              activeIndex={safeActiveIndex}
+              className={`projects-orbit projects-orbit--${viewMode}`}
+              baseWidth={orbitLayout.baseWidth}
+              baseHeight={orbitLayout.baseHeight}
+              radiusX={orbitLayout.radiusX}
+              radiusY={orbitLayout.radiusY}
+              rotation={-4}
+              itemWidth={orbitLayout.itemWidth}
+              itemHeight={orbitLayout.itemHeight}
+              activeOffset={25}
+              compactActiveOffset={25}
+              compactBaseHeight={orbitLayout.compactBaseHeight}
+              compactRadiusX={orbitLayout.compactRadiusX}
+              compactRadiusY={orbitLayout.compactRadiusY}
+              compactItemWidth={orbitLayout.compactItemWidth}
+              compactItemHeight={orbitLayout.compactItemHeight}
               transitionDuration={0.95}
-              visibleRadius={4}
+              compactLayout={viewMode === "all" ? "grid" : "orbit"}
               responsive
               renderItem={(project, index, { isActive, isVisible }) => (
                 <GlareHover
@@ -330,6 +464,7 @@ export default function Projects() {
                   }`}
                   onClick={() => handleProjectClick(project, index)}
                   aria-pressed={isActive}
+                  aria-current={isActive ? "true" : undefined}
                   aria-label={`${project.title} / ${project.titleEn}`}
                   tabIndex={isVisible ? 0 : -1}
                   width="100%"
@@ -346,6 +481,11 @@ export default function Projects() {
                   <span className="projects-orbit-image-wrap">
                     <ProjectThumbnail project={project} />
                     <span className="projects-orbit-shade" />
+                    {isActive ? (
+                      <span className="projects-orbit-current">
+                        Current / {"\u5f53\u524d"}
+                      </span>
+                    ) : null}
                     {project.video ? (
                       <span className="projects-orbit-play">
                         <span className="projects-orbit-play-icon" />
@@ -382,10 +522,28 @@ export default function Projects() {
             />
           </div>
 
+          <div className="projects-stage-copy">
+            <p className="section-label projects-stage-label">
+              <TextReveal text="Selected Works / \u7cbe\u9009\u4f5c\u54c1" animateOn="view" speed={18} />
+            </p>
+            <h2 className="section-title projects-stage-title">
+              <TextReveal text={"\u4f5c\u54c1"} animateOn="view" speed={16} />
+            </h2>
+            <p className="projects-stage-subtitle">
+              <TextReveal
+                text="Selected works / Image, light, space and the state between them"
+                animateOn="view"
+                sequential={false}
+                speed={12}
+              />
+            </p>
+          </div>
+
           <div className="projects-stage-detail" aria-live="polite">
             <p className="projects-stage-detail-count">
+              <span>Current / {"\u5f53\u524d"}</span>
               <TextReveal
-                text={`${String(activeIndex + 1).padStart(2, "0")} / ${String(visibleProjects.length).padStart(2, "0")}`}
+                text={`${String(safeActiveIndex + 1).padStart(2, "0")} / ${String(visibleProjects.length).padStart(2, "0")}`}
                 animateOn="view"
                 sequential={false}
                 speed={14}
@@ -437,6 +595,16 @@ export default function Projects() {
               {activeProject.note ? (
                 <p className="projects-stage-detail-note">
                   <TextReveal text={activeProject.note} animateOn="view" speed={9} />
+                  {activeProject.noteEn ? (
+                    <span className="projects-stage-detail-note-en">
+                      <TextReveal
+                        text={activeProject.noteEn}
+                        animateOn="view"
+                        sequential={false}
+                        speed={9}
+                      />
+                    </span>
+                  ) : null}
                 </p>
               ) : null}
             </div>
@@ -526,7 +694,8 @@ export default function Projects() {
                           <img
                             src={image}
                             alt={`${openedProject.title} still ${index + 1}`}
-                            loading={index < 3 ? "eager" : "lazy"}
+                            loading={index === 0 ? "eager" : "lazy"}
+                            decoding="async"
                           />
                           <figcaption>
                             {String(index + 1).padStart(2, "0")}
@@ -564,6 +733,12 @@ export default function Projects() {
                     </p>
                     <h3 className="projects-modal-title">{openedProject.title}</h3>
                     <p className="projects-modal-title-en">{openedProject.titleEn}</p>
+                    {openedProject.note ? (
+                      <div className="projects-modal-statement">
+                        <p>{openedProject.note}</p>
+                        {openedProject.noteEn ? <p>{openedProject.noteEn}</p> : null}
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="projects-modal-meta">
@@ -574,7 +749,7 @@ export default function Projects() {
                       {openedProject.roleEn}
                     </p>
                     <p>
-                      <span>Institution / {"\u5b66\u6821"}</span>
+                      <span>Production / {"\u9879\u76ee\u6765\u6e90"}</span>
                       {openedProject.institution}
                       <br />
                       {openedProject.institutionEn}

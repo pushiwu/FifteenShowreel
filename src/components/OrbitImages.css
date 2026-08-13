@@ -3,7 +3,7 @@
   width: 100%;
   margin-right: auto;
   margin-left: auto;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .orbit-scaling-container {
@@ -33,7 +33,11 @@
 .orbit-item {
   position: absolute;
   user-select: none;
-  will-change: offset-distance, opacity;
+  will-change: offset-distance, opacity, z-index;
+}
+
+.orbit-item:focus-within {
+  z-index: 1000 !important;
 }
 
 .orbit-item__content {
@@ -47,6 +51,35 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.orbit-container--grid {
+  overflow: hidden;
+}
+
+.orbit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+}
+
+.orbit-grid-item {
+  min-width: 0;
+  aspect-ratio: 0.69;
+}
+
+.orbit-grid-item.is-active {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(68%, 228px);
+  margin-bottom: 12px;
+}
+
+.orbit-grid-item__content {
+  width: 100%;
+  height: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -46,6 +46,7 @@ test("文字资料项目不伪造媒体资源并仍可被全部项目展示", ()
     "湖南省益阳市南县检察院MV",
     "湖南省怀化市麻阳县2025文旅宣传片",
     "蜘蛛之丝",
+    "悔纪春归",
   ];
 
   for (const title of textOnlyTitles) {
@@ -59,7 +60,7 @@ test("文字资料项目不伪造媒体资源并仍可被全部项目展示", ()
 
   assert.deepEqual(
     projects.filter((project) => project.textOnly).map((project) => project.id),
-    [23, 24, 25, 26, 27]
+    [23, 24, 25, 26, 27, 28]
   );
 });
 
@@ -71,5 +72,21 @@ test("所有视频项目都声明静态 poster", () => {
       true,
       `Missing poster asset: ${project.title}`
     );
+  }
+});
+
+test("创作阐述保持中英成对，媒体状态不冒充作品类型", () => {
+  for (const project of projects) {
+    if (project.note) {
+      assert.ok(project.noteEn, `Missing English statement: ${project.title}`);
+    }
+
+    if (project.textOnly) {
+      assert.notEqual(
+        project.formatEn,
+        "Text-Only Project",
+        `Media availability is not a format: ${project.title}`,
+      );
+    }
   }
 });

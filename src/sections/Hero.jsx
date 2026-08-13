@@ -1,19 +1,55 @@
+import { useEffect, useRef } from "react";
 import "./Hero.css";
 import TextReveal from "../components/TextReveal";
 
-export default function Hero() {
+export default function Hero({ active = true }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    let isInView = true;
+    const syncPlayback = () => {
+      if (active && isInView && !document.hidden) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isInView = entry.isIntersecting;
+        syncPlayback();
+      },
+      { threshold: 0.08 },
+    );
+    const handleVisibilityChange = () => syncPlayback();
+
+    observer.observe(video);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    syncPlayback();
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      video.pause();
+    };
+  }, [active]);
+
   return (
     <section className="hero" id="home">
       <div className="hero-shell">
         <video
+          ref={videoRef}
           className="hero-video"
-          src="/projects/showreel.mp4"
+          src={active ? "/projects/showreel-web.mp4" : undefined}
           poster="/hero-showreel-poster.jpg"
-          autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload={active ? "metadata" : "none"}
           aria-hidden="true"
         />
         <div className="hero-bg-layer" />
@@ -51,7 +87,7 @@ export default function Hero() {
             </p>
             <p className="hero-role-en">
               <TextReveal
-                text="Cinematography, Gaffer, Camera Operator, 1st Assistant Camera, Digital Imaging Technician"
+                text="Cinematographer / Gaffer / Camera Operator / 1st AC / DIT"
                 animateOn="view"
                 sequential={false}
                 speed={14}

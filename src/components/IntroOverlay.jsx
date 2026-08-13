@@ -79,7 +79,7 @@ export default function IntroOverlay({ onComplete }) {
           text="showreel"
           tag="h1"
           mediaType="video"
-          src="/projects/showreel.mp4"
+          src="/projects/showreel-intro.mp4"
           poster="/hero-showreel-poster.jpg"
           fillScale={1.32}
           parallax={22}

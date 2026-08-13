@@ -67,20 +67,20 @@ const shiningMeGalleryImages = [
 ];
 
 const poemGalleryImages = [
-  "/projects/poem/微信图片_20250515175116.png",
-  "/projects/poem/微信图片_20250515175143.png",
-  "/projects/poem/微信图片_20250515175147.png",
-  "/projects/poem/微信图片_20250515175153.png",
-  "/projects/poem/微信图片_20250515175157.png",
-  "/projects/poem/微信图片_20250515175202.png",
-  "/projects/poem/微信图片_20250515175210.png",
-  "/projects/poem/微信图片_20250515175212.png",
-  "/projects/poem/微信图片_20250515175216.png",
-  "/projects/poem/微信图片_20250515175221.png",
-  "/projects/poem/微信图片_20250515175224.png",
-  "/projects/poem/微信图片_20250515175228.png",
-  "/projects/poem/微信图片_20250515175231.png",
-  "/projects/poem/微信图片_20250515175243.png",
+  "/projects/poem/web/01.webp",
+  "/projects/poem/web/02.webp",
+  "/projects/poem/web/03.webp",
+  "/projects/poem/web/04.webp",
+  "/projects/poem/web/05.webp",
+  "/projects/poem/web/06.webp",
+  "/projects/poem/web/07.webp",
+  "/projects/poem/web/08.webp",
+  "/projects/poem/web/09.webp",
+  "/projects/poem/web/10.webp",
+  "/projects/poem/web/11.webp",
+  "/projects/poem/web/12.webp",
+  "/projects/poem/web/13.webp",
+  "/projects/poem/web/14.webp",
 ];
 
 const poemCover =
@@ -123,7 +123,7 @@ const maiMiaoGrowthGalleryImages = [
 const maiMiaoGrowthCover =
   maiMiaoGrowthGalleryImages[Math.floor(Math.random() * maiMiaoGrowthGalleryImages.length)];
 
-export const projects = [
+const projectRecords = [
   {
     id: 29,
     layer: "core",
@@ -143,6 +143,7 @@ export const projects = [
     id: 8,
     layer: "core",
     note: "\u300a\u7070\u8272\u8eab\u4efd\u300b\u8bd5\u56fe\u5728\u7e41\u534e\u8868\u8c61\u4e0b\uff0c\u6355\u6349\u5f53\u4ee3\u4eba\u5728\u7070\u8272\u5730\u5e26\u4e2d\u88ab\u73af\u5883\u6324\u538b\u3001\u5851\u5f62\u4e0e\u60ac\u7f6e\u7684\u8eab\u4efd\u72b6\u6001\u3002",
+    noteEn: "Grey Identity looks beneath a prosperous surface to trace how contemporary identity is compressed, shaped and suspended within social grey zones.",
     title: "\u7070\u8272\u8eab\u4efd",
     titleEn: "Grey Identity",
     role: "\u6444\u5f71\u6307\u5bfc",
@@ -158,6 +159,7 @@ export const projects = [
     id: 13,
     layer: "core",
     note: "\u300a\u8110\u72f1\u300b\u901a\u8fc7\u538b\u7f29\u7684\u7a7a\u95f4\u3001\u514b\u5236\u7684\u51dd\u89c6\u4e0e\u7ea2\u7ef3\u8fd9\u4e00\u6301\u7eed\u7275\u8fde\u7684\u610f\u8c61\uff0c\u5448\u73b0\u6bcd\u5973\u5173\u7cfb\u4e2d\u7231\u4e0e\u675f\u7f1a\u5e76\u5b58\u7684\u60c5\u7eea\u56f0\u5883\u3002",
+    noteEn: "Through compressed space, restrained observation and the recurring image of a red cord, The Umbilical Prison explores a mother-daughter bond in which love and confinement coexist.",
     title: "\u8110\u72f1",
     titleEn: "The Umbilical Prison",
     role: "\u6444\u5f71\u6307\u5bfc",
@@ -173,6 +175,7 @@ export const projects = [
     id: 9,
     layer: "extended",
     note: "\u300a\u6bd4\u5212\u300b\u901a\u8fc7\u624e\u6839\u5730\u65b9\u6587\u5316\u7684\u73b0\u5b9e\u7a7a\u95f4\u3001\u4eba\u7269\u7fa4\u50cf\u4e0e\u70bd\u70ed\u5149\u5f71\uff0c\u5448\u73b0\u9ebb\u9633\u9f99\u821f\u7cbe\u795e\u80cc\u540e\u8d28\u6734\u800c\u5f3a\u97e7\u7684\u96c6\u4f53\u529b\u91cf\u3002",
+    noteEn: "Rooted in local spaces, collective portraiture and heated light, Bihua reveals the plain yet resilient communal force behind Mayang's dragon-boat tradition.",
     title: "\u6bd4\u5212",
     titleEn: "Bihua",
     role: "\u6444\u5f71\u6307\u5bfc",
@@ -207,10 +210,10 @@ export const projects = [
     titleEn: "Heartbeat Metronome",
     role: "\u706f\u5149\u5e08 / \u8c03\u8272\u5e08",
     roleEn: "Gaffer / Colorist",
-    institution: "\u5b9e\u9a8c\u77ed\u7247",
-    institutionEn: "Experimental Short",
-    format: "\u5267\u60c5\u77ed\u7247",
-    formatEn: "Narrative Short Film",
+    institution: "\u72ec\u7acb\u5f71\u7247",
+    institutionEn: "Independent Film",
+    format: "\u5b9e\u9a8c\u77ed\u7247",
+    formatEn: "Experimental Short Film",
     poster: "/projects/posters/heartbeat-metronome.jpg",
     video: "/projects/heartbeat-metronome.mp4",
   },
@@ -323,8 +326,8 @@ export const projects = [
     roleEn: "Best Boy Electric",
     institution: "北京电影学院",
     institutionEn: "Beijing Film Academy",
-    format: "文字资料项目",
-    formatEn: "Text-Only Project",
+    format: "剧情短片",
+    formatEn: "Narrative Short Film",
   },
   {
     id: 24,
@@ -336,8 +339,8 @@ export const projects = [
     roleEn: "1st Assistant Camera",
     institution: "北京电影学院",
     institutionEn: "Beijing Film Academy",
-    format: "文字资料项目",
-    formatEn: "Text-Only Project",
+    format: "待确认",
+    formatEn: "To Be Confirmed",
   },
   {
     id: 25,
@@ -349,8 +352,8 @@ export const projects = [
     roleEn: "Gaffer",
     institution: "商业项目",
     institutionEn: "Commercial Project",
-    format: "文字资料项目",
-    formatEn: "Text-Only Project",
+    format: "音乐影像",
+    formatEn: "Music Video",
   },
   {
     id: 26,
@@ -362,8 +365,8 @@ export const projects = [
     roleEn: "Cinematographer",
     institution: "商业项目",
     institutionEn: "Commercial Project",
-    format: "文字资料项目",
-    formatEn: "Text-Only Project",
+    format: "文旅宣传片",
+    formatEn: "Cultural Tourism Film",
   },
   {
     id: 27,
@@ -381,6 +384,7 @@ export const projects = [
   {
     id: 28,
     layer: "archive",
+    textOnly: true,
     title: "悔纪春归",
     titleEn: "Spring Returns, Regrets Remain",
     role: "待补资料",
@@ -389,7 +393,8 @@ export const projects = [
     institutionEn: "Materials Pending",
     format: "剧情短片",
     formatEn: "Narrative Short Film",
-    note: "当前素材库尚未找到该项目的图片或视频，先保留文字条目，待补充资料后接入画廊。",
+    note: "该项目目前以履历条目收录，完整影像资料将在后续档案更新中补充。",
+    noteEn: "This project is currently presented as a portfolio record. Complete visual materials will be added in a future archive update.",
   },
   {
     id: 16,
@@ -536,3 +541,11 @@ export const projects = [
     ],
   },
 ];
+
+export const projects = projectRecords.map((project) => ({
+  ...project,
+  thumbnail:
+    project.textOnly || (!project.poster && !project.image)
+      ? undefined
+      : `/projects/thumbnails/${project.id}.webp`,
+}));

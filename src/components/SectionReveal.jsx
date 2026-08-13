@@ -37,13 +37,11 @@ export default function SectionReveal({
             autoAlpha: 0,
             y: mobile ? 18 : 28,
             clipPath: "inset(0% 0% 8% 0% round 18px)",
-            filter: "brightness(0.72)",
           },
           {
             autoAlpha: 1,
             y: 0,
             clipPath: "inset(0% 0% 0% 0% round 0px)",
-            filter: "brightness(1)",
             duration: 1.45,
             ease: "power3.out",
             onComplete: () => {
@@ -61,16 +59,14 @@ export default function SectionReveal({
           y: mobile ? 34 : 72,
           scale: mobile ? 0.995 : 0.988,
           clipPath: mobile
-            ? "inset(9% 0% 0% 0% round 16px)"
+            ? "inset(0% 0% 0% 0% round 0px)"
             : "inset(13% 1.2% 0% 1.2% round 24px)",
-          filter: "brightness(0.64)",
         },
         {
           autoAlpha: 1,
           y: 0,
           scale: 1,
           clipPath: "inset(0% 0% 0% 0% round 0px)",
-          filter: "brightness(1)",
           ease: "none",
           scrollTrigger: {
             trigger: root,
@@ -88,27 +84,29 @@ export default function SectionReveal({
         },
       );
 
-      const exitParallax = gsap.fromTo(
-        surface,
-        { yPercent: 0 },
-        {
-          yPercent: mobile ? -1.2 : -2.4,
-          ease: "none",
-          scrollTrigger: {
-            trigger: root,
-            start: "bottom 72%",
-            end: "bottom top",
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        },
-      );
+      const exitParallax = mobile
+        ? null
+        : gsap.fromTo(
+            surface,
+            { yPercent: 0 },
+            {
+              yPercent: -2.4,
+              ease: "none",
+              scrollTrigger: {
+                trigger: root,
+                start: "bottom 72%",
+                end: "bottom top",
+                scrub: true,
+                invalidateOnRefresh: true,
+              },
+            },
+          );
 
       root.dataset.revealed = "scrolling";
 
       return () => {
         reveal.kill();
-        exitParallax.kill();
+        exitParallax?.kill();
       };
     }, root);
 

@@ -1,37 +1,39 @@
 .projects {
   padding: 136px 0 168px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .projects-stage {
   position: relative;
-  min-height: 980px;
+  display: grid;
+  min-width: 0;
+  padding: 28px 0 46px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background:
-    radial-gradient(circle at 50% 34%, rgba(255, 255, 255, 0.07), transparent 26%),
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.07), transparent 28%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  isolation: isolate;
 }
 
 .projects-stage-copy {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 6;
-  width: min(520px, 48vw);
+  position: relative;
+  z-index: 2;
+  width: min(720px, 100%);
+  margin: 44px auto 0;
+  padding: 0 38px;
   text-align: center;
-  transform: translate(-50%, -58%);
   pointer-events: none;
 }
 
 .projects-view-switcher {
-  position: absolute;
-  top: 38px;
-  right: 38px;
+  position: relative;
   z-index: 8;
   display: inline-flex;
   gap: 18px;
   align-items: center;
+  justify-self: start;
+  margin: 0 38px;
 }
 
 .projects-view-tab {
@@ -87,7 +89,15 @@
 
 .projects-curve {
   position: relative;
-  margin-top: 48px;
+  z-index: 1;
+  min-width: 0;
+  margin-top: 16px;
+  padding: 0 8px;
+  overflow: visible;
+}
+
+.projects-orbit {
+  overflow: visible;
 }
 
 .projects-orbit-item {
@@ -99,17 +109,17 @@
   color: var(--text-primary);
   cursor: pointer;
   transition: filter 0.5s ease;
-  filter: saturate(0.72) grayscale(0.14);
+  filter: brightness(0.64) saturate(0.56) grayscale(0.2);
 }
 
 .projects-orbit-item:hover,
 .projects-orbit-item:focus-visible {
-  filter: saturate(0.95) grayscale(0);
+  filter: brightness(0.9) saturate(0.92) grayscale(0);
   outline: none;
 }
 
 .projects-orbit-item.is-active {
-  filter: saturate(1) grayscale(0);
+  filter: brightness(1.08) saturate(1.06) grayscale(0);
 }
 
 .projects-orbit-image-wrap,
@@ -122,8 +132,26 @@
 .projects-orbit-image-wrap {
   overflow: hidden;
   border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   background: rgba(255, 255, 255, 0.03);
   box-shadow: 0 42px 80px rgba(0, 0, 0, 0.34);
+  transition: border-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+.projects-orbit-item.is-active .projects-orbit-image-wrap {
+  border-color: rgba(242, 242, 242, 0.72);
+  box-shadow:
+    0 54px 110px rgba(0, 0, 0, 0.52),
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 42px rgba(230, 230, 230, 0.1);
+}
+
+.projects-orbit-item:focus-visible .projects-orbit-image-wrap {
+  border-color: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    0 0 0 3px rgba(9, 10, 11, 0.98),
+    0 0 0 5px rgba(242, 242, 242, 0.94),
+    0 36px 82px rgba(0, 0, 0, 0.48);
 }
 
 .projects-orbit-image {
@@ -159,6 +187,24 @@
   background:
     linear-gradient(180deg, rgba(5, 6, 7, 0.08) 18%, rgba(5, 6, 7, 0.26) 58%, rgba(5, 6, 7, 0.88) 100%),
     linear-gradient(90deg, rgba(0, 0, 0, 0.24), transparent 34%, transparent 68%, rgba(0, 0, 0, 0.28));
+}
+
+.projects-orbit-current {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 3;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(8, 9, 10, 0.58);
+  color: rgba(242, 242, 242, 0.96);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
 }
 
 .projects-orbit-meta {
@@ -231,23 +277,72 @@
   text-transform: uppercase;
 }
 
+.projects-orbit--all .projects-orbit-meta {
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+  gap: 3px;
+}
+
+.projects-orbit--all .projects-orbit-title {
+  font-size: 13px;
+}
+
+.projects-orbit--all .projects-orbit-title-en,
+.projects-orbit--all .projects-orbit-index {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+}
+
+.projects-orbit--all .projects-orbit-current {
+  top: 10px;
+  left: 10px;
+  padding: 5px 7px;
+  font-size: 6px;
+}
+
+.projects-orbit--all .projects-orbit-play {
+  top: 10px;
+  right: 10px;
+}
+
+.projects-orbit--all .projects-orbit-play-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.projects-orbit--all .projects-orbit-play-copy,
+.projects-orbit--all .projects-orbit-item:not(.is-active) .projects-orbit-title,
+.projects-orbit--all .projects-orbit-item:not(.is-active) .projects-orbit-title-en,
+.projects-orbit--all .projects-orbit-item:not(.is-active) .projects-orbit-play {
+  display: none;
+}
+
 .projects-stage-detail {
-  position: absolute;
-  right: 0;
-  bottom: 42px;
-  left: 0;
-  z-index: 7;
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: 120px minmax(0, 1.2fr) minmax(320px, 0.8fr);
   align-items: end;
   gap: 32px;
-  padding: 0 38px;
+  margin: 44px 38px 0;
+  padding: 30px 0 0;
+  border-top: 1px solid var(--line);
 }
 
 .projects-stage-detail-count {
+  display: grid;
+  gap: 8px;
   color: var(--text-muted);
   font-size: 11px;
   letter-spacing: 0.18em;
+}
+
+.projects-stage-detail-count > span:first-child {
+  color: var(--accent);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 
 .projects-stage-detail-main {
@@ -296,6 +391,15 @@
   font-family: var(--font-serif);
   font-size: 16px;
   line-height: 1.55;
+}
+
+.projects-stage-detail-note-en {
+  display: block;
+  margin-top: 8px;
+  color: rgba(179, 179, 179, 0.76);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.65;
 }
 
 .projects-text-only {
@@ -611,6 +715,22 @@
   text-transform: uppercase;
 }
 
+.projects-modal-statement {
+  display: grid;
+  gap: 10px;
+  max-width: 720px;
+  margin-top: 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.projects-modal-statement p:last-child {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
 .projects-modal-meta {
   display: grid;
   gap: 18px;
@@ -630,19 +750,16 @@
 
 @media (max-width: 1380px) {
   .projects-stage {
-    min-height: 920px;
+    min-height: 0;
   }
 
   .projects-stage-copy {
-    width: min(500px, 56vw);
+    width: min(620px, 72vw);
   }
 
   .projects-view-switcher {
-    position: relative;
-    top: auto;
-    right: auto;
-    justify-content: center;
-    margin: 26px 24px 0;
+    margin-right: 24px;
+    margin-left: 24px;
   }
 
   .projects-stage-detail {
@@ -670,7 +787,7 @@
 
   .projects-stage {
     min-height: auto;
-    padding: 96px 0 42px;
+    padding: 28px 0 42px;
   }
 
   .projects-stage-copy {
@@ -683,7 +800,7 @@
   }
 
   .projects-curve {
-    margin-top: 34px;
+    margin-top: 12px;
   }
 
   .projects-stage-detail {
@@ -694,7 +811,9 @@
     grid-template-columns: 1fr;
     gap: 20px;
     margin-top: 28px;
-    padding: 0 24px;
+    margin-right: 24px;
+    margin-left: 24px;
+    padding: 26px 0 0;
   }
 
   .projects-text-only {
@@ -745,7 +864,58 @@
   }
 
   .projects-curve {
-    margin-top: 28px;
+    margin-top: 8px;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .projects-stage-copy {
+    margin-top: 32px;
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .projects-stage-detail {
+    margin-right: 18px;
+    margin-left: 18px;
+  }
+
+  .projects-orbit--all.orbit-container--grid {
+    margin-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  .projects-orbit--all .orbit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .projects-orbit--all .orbit-grid-item.is-active {
+    width: min(68%, 224px);
+  }
+
+  .projects-orbit--all .orbit-grid-item:not(.is-active) .projects-orbit-meta {
+    display: flex;
+    right: 9px;
+    bottom: 9px;
+    left: 9px;
+    gap: 3px;
+  }
+
+  .projects-orbit--all .orbit-grid-item:not(.is-active) .projects-orbit-index,
+  .projects-orbit--all .orbit-grid-item:not(.is-active) .projects-orbit-title {
+    display: block;
+  }
+
+  .projects-orbit--all .orbit-grid-item:not(.is-active) .projects-orbit-title {
+    font-size: 11px;
+  }
+
+  .projects-orbit--all .orbit-grid-item:not(.is-active) .projects-orbit-index {
+    font-size: 7px;
   }
 
   .projects-text-only {

@@ -67,7 +67,7 @@ export default function Resume() {
         <div className="resume-content">
           <div className="resume-profile-line">
             <span>Fifteen Pu</span>
-            <span>Image creator / Cinematography / Lighting / Camera / DIT</span>
+            <span>Cinematographer / Gaffer / Camera Operator / 1st AC / DIT</span>
           </div>
           <div className="resume-awards">
             {awards.map((award, index) => (

@@ -51,11 +51,15 @@ export default function LiquidEther({
       radius: 0.28 + index * 0.025,
     }));
 
-    let frame = 0;
-    let lastFrameAt = 0;
     let width = 0;
     let height = 0;
-    let reducedMotion = false;
+    let animationFrame = 0;
+    let lastFrameAt = 0;
+    let isPageVisible = !document.hidden;
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileQuery = window.matchMedia("(max-width: 700px)");
+    let reducedMotion = motionQuery.matches;
+    let mobileViewport = mobileQuery.matches;
 
     const resize = () => {
       const scale = clamp(resolution, 0.25, 1);
@@ -97,14 +101,7 @@ export default function LiquidEther({
       context.fill();
     };
 
-    const render = (time) => {
-      frame = 0;
-      if (reducedMotion || time - lastFrameAt < 1000 / 30) {
-        frame = window.requestAnimationFrame(render);
-        return;
-      }
-
-      lastFrameAt = time;
+    const draw = (time) => {
       const pointer = pointerRef.current;
       const autoX = 0.5 + Math.sin(time * 0.00016 * autoSpeed) * 0.3;
       const autoY = 0.48 + Math.cos(time * 0.00013 * autoSpeed) * 0.24;
@@ -157,28 +154,85 @@ export default function LiquidEther({
       context.arc(targetX * width, targetY * height, cursorRadius, 0, Math.PI * 2);
       context.fill();
 
-      frame = window.requestAnimationFrame(render);
     };
 
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    reducedMotion = mediaQuery.matches;
+    const schedule = () => {
+      if (animationFrame || reducedMotion || !isPageVisible) return;
+      animationFrame = window.requestAnimationFrame(render);
+    };
+
+    const render = (time) => {
+      animationFrame = 0;
+      if (!isPageVisible || reducedMotion) return;
+
+      const fps = mobileViewport ? 18 : 30;
+      if (time - lastFrameAt < 1000 / fps) {
+        schedule();
+        return;
+      }
+
+      lastFrameAt = time;
+      draw(time);
+      schedule();
+    };
+
+    const renderStaticFrame = () => {
+      draw(performance.now());
+    };
+
+    const handleResize = () => {
+      resize();
+      if (reducedMotion) renderStaticFrame();
+    };
+
+    const handleVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+      if (!isPageVisible) {
+        window.cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+        return;
+      }
+      lastFrameAt = 0;
+      if (reducedMotion) renderStaticFrame();
+      else schedule();
+    };
+
     const handleMotionPreference = (event) => {
       reducedMotion = event.matches;
+      if (reducedMotion) {
+        window.cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+        renderStaticFrame();
+      } else {
+        lastFrameAt = 0;
+        schedule();
+      }
+    };
+
+    const handleViewportChange = (event) => {
+      mobileViewport = event.matches;
+      lastFrameAt = 0;
+      schedule();
     };
 
     resize();
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", handleResize);
     window.addEventListener("pointermove", updatePointer, { passive: true });
     window.addEventListener("pointerleave", resetPointer);
-    mediaQuery.addEventListener?.("change", handleMotionPreference);
-    frame = window.requestAnimationFrame(render);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    motionQuery.addEventListener?.("change", handleMotionPreference);
+    mobileQuery.addEventListener?.("change", handleViewportChange);
+    if (reducedMotion) renderStaticFrame();
+    else schedule();
 
     return () => {
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("pointermove", updatePointer);
       window.removeEventListener("pointerleave", resetPointer);
-      mediaQuery.removeEventListener?.("change", handleMotionPreference);
-      window.cancelAnimationFrame(frame);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      motionQuery.removeEventListener?.("change", handleMotionPreference);
+      mobileQuery.removeEventListener?.("change", handleViewportChange);
+      window.cancelAnimationFrame(animationFrame);
     };
   }, [
     autoIntensity,

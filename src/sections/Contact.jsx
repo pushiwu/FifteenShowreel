@@ -17,14 +17,12 @@ export default function Contact() {
   const wrapperRef = useRef(null);
   const giantTextRef = useRef(null);
   const contentRef = useRef(null);
-  const footerRef = useRef(null);
 
   useLayoutEffect(() => {
     const wrapper = wrapperRef.current;
     const giantText = giantTextRef.current;
     const content = contentRef.current;
-    const footer = footerRef.current;
-    if (!wrapper || !giantText || !content || !footer) return undefined;
+    if (!wrapper || !giantText || !content) return undefined;
 
     const context = gsap.context(() => {
       const reducedMotion = window.matchMedia(
@@ -70,20 +68,6 @@ export default function Contact() {
         },
       );
 
-      gsap.fromTo(
-        footer,
-        { filter: "brightness(0.72)" },
-        {
-          filter: "brightness(1)",
-          ease: "none",
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "top bottom",
-            end: "top 18%",
-            scrub: true,
-          },
-        },
-      );
     }, wrapper);
 
     return () => context.revert();
@@ -100,7 +84,7 @@ export default function Contact() {
 
   return (
     <section ref={wrapperRef} className="contact-curtain" id="contact">
-      <footer ref={footerRef} className="contact">
+      <footer className="contact">
         <div className="contact-grid" aria-hidden="true" />
         <div className="contact-aurora" aria-hidden="true" />
         <div ref={giantTextRef} className="contact-giant" aria-hidden="true">
@@ -142,7 +126,7 @@ export default function Contact() {
 
           <div className="contact-bottom">
             <p className="contact-footer">
-              Fifteen Pu Personal Portfolio | Updated July 30, 2026
+              Fifteen Pu Personal Portfolio | Updated August 13, 2026
             </p>
             <button
               className="contact-top"

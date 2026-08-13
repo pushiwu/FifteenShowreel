@@ -9,7 +9,7 @@
   position: relative;
   width: 100%;
   transform-origin: center top;
-  will-change: opacity, transform, clip-path, filter;
+  will-change: opacity, transform, clip-path;
 }
 
 @media (prefers-reduced-motion: reduce) {

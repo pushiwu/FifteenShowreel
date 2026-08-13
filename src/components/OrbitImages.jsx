@@ -12,17 +12,18 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  getOrbitItemVisualState,
+  getOrbitPresentation,
+  getSafeActiveIndex,
+  getSafeOrbitRadiusY,
+  ORBIT_ACTIVE_SCALE,
+} from "../utils/orbitLayout";
 
 import "./OrbitImages.css";
 
 function generateEllipsePath(centerX, centerY, radiusX, radiusY) {
   return `M ${centerX - radiusX} ${centerY} A ${radiusX} ${radiusY} 0 1 0 ${centerX + radiusX} ${centerY} A ${radiusX} ${radiusY} 0 1 0 ${centerX - radiusX} ${centerY}`;
-}
-
-function getCircularOffset(index, activeIndex, total) {
-  if (total <= 0) return 0;
-  const raw = index - activeIndex;
-  return ((raw + total + Math.floor(total / 2)) % total) - Math.floor(total / 2);
 }
 
 function OrbitItem({
@@ -36,17 +37,21 @@ function OrbitItem({
   rotation,
   progress,
   fill,
-  visibleRadius,
   renderItem,
+  reducedMotion,
 }) {
   const itemOffset = fill ? (index / totalItems) * 100 : 0;
-  const circularOffset = getCircularOffset(index, activeIndex, totalItems);
-  const distance = Math.abs(circularOffset);
-  const isActive = distance === 0;
-  const isVisible = distance <= visibleRadius;
-  const scale = Math.max(0.58, 1 - distance * 0.115);
-  const opacity = isVisible ? Math.max(0.18, 1 - distance * 0.2) : 0;
-  const tilt = circularOffset === 0 ? 0 : Math.sign(circularOffset) * Math.min(16, 5 + distance * 2.5);
+  const {
+    circularOffset,
+    distance,
+    isActive,
+    isVisible,
+    opacity,
+    scale,
+    spreadX,
+    tilt,
+    zIndex,
+  } = getOrbitItemVisualState(index, activeIndex, totalItems);
 
   const offsetDistance = useTransform(progress, (value) => {
     const offset = (((value + itemOffset) % 100) + 100) % 100;
@@ -63,20 +68,23 @@ function OrbitItem({
         offsetRotate: "0deg",
         offsetAnchor: "center center",
         offsetDistance,
-        zIndex: totalItems - distance,
-        pointerEvents: isVisible ? "auto" : "none",
+        zIndex,
+        pointerEvents: "none",
       }}
       animate={{ opacity }}
-      transition={{ duration: 0.55, ease: [0.2, 0.8, 0.2, 1] }}
-      aria-hidden={!isVisible}
+      transition={{ duration: reducedMotion ? 0 : 0.55, ease: [0.2, 0.8, 0.2, 1] }}
+      aria-hidden="false"
+      data-orbit-distance={distance}
     >
       <motion.div
         className="orbit-item__content"
         animate={{
           rotate: -rotation + tilt,
-          scale: isActive ? 1.04 : scale,
+          scale,
+          x: spreadX,
         }}
-        transition={{ duration: 0.85, ease: [0.2, 0.8, 0.2, 1] }}
+        style={{ pointerEvents: "auto" }}
+        transition={{ duration: reducedMotion ? 0 : 0.85, ease: [0.2, 0.8, 0.2, 1] }}
       >
         {renderItem
           ? renderItem(item, index, {
@@ -113,7 +121,6 @@ export default function OrbitImages({
   pathColor = "rgba(255,255,255,0.08)",
   pathWidth = 1,
   responsive = true,
-  visibleRadius = 4,
   compactBreakpoint = 720,
   compactBaseWidth = 700,
   compactBaseHeight = 620,
@@ -121,16 +128,22 @@ export default function OrbitImages({
   compactRadiusY = 150,
   compactItemWidth = 280,
   compactItemHeight = 400,
+  orbitPadding = 44,
+  compactOrbitPadding = 28,
+  compactLayout = "orbit",
 }) {
   const containerRef = useRef(null);
   const previousIndexRef = useRef(activeIndex);
   const continuousIndexRef = useRef(activeIndex);
   const latestActiveIndexRef = useRef(activeIndex);
   const [scale, setScale] = useState(responsive ? null : 1);
-  const [compact, setCompact] = useState(false);
+  const [compact, setCompact] = useState(
+    () =>
+      responsive &&
+      typeof window !== "undefined" &&
+      window.innerWidth <= compactBreakpoint,
+  );
   const reducedMotion = useReducedMotion();
-
-  latestActiveIndexRef.current = activeIndex;
 
   const sourceItems = useMemo(() => {
     if (items) return items;
@@ -148,11 +161,32 @@ export default function OrbitImages({
   const designWidth = compact ? compactBaseWidth : baseWidth;
   const designHeight = compact ? compactBaseHeight : baseHeight;
   const designRadiusX = compact ? compactRadiusX : radiusX;
-  const designRadiusY = compact ? compactRadiusY : radiusY;
   const designItemWidth = compact ? compactItemWidth : itemWidth;
   const designItemHeight = compact ? compactItemHeight : itemHeight;
+  const designRadiusY = getSafeOrbitRadiusY({
+    requestedRadiusY: compact ? compactRadiusY : radiusY,
+    containerHeight: designHeight,
+    itemHeight: designItemHeight,
+    activeScale: ORBIT_ACTIVE_SCALE,
+    padding: compact ? compactOrbitPadding : orbitPadding,
+  });
   const designActiveOffset = compact ? compactActiveOffset : activeOffset;
   const totalItems = sourceItems.length;
+  const safeActiveIndex = getSafeActiveIndex(activeIndex, totalItems);
+  const presentation = getOrbitPresentation({
+    compact,
+    compactLayout,
+    totalItems,
+  });
+  const gridItems = useMemo(() => {
+    const indexedItems = sourceItems.map((item, index) => ({ item, index }));
+    if (presentation !== "grid" || totalItems <= 0) return indexedItems;
+
+    return [
+      indexedItems[safeActiveIndex],
+      ...indexedItems.filter(({ index }) => index !== safeActiveIndex),
+    ];
+  }, [presentation, safeActiveIndex, sourceItems, totalItems]);
   const centerX = designWidth / 2;
   const centerY = designHeight / 2;
   const path = useMemo(
@@ -161,9 +195,11 @@ export default function OrbitImages({
   );
   const progress = useMotionValue(
     totalItems > 0
-      ? designActiveOffset - (activeIndex / totalItems) * 100
+      ? designActiveOffset - (safeActiveIndex / totalItems) * 100
       : designActiveOffset,
   );
+
+  latestActiveIndexRef.current = safeActiveIndex;
 
   useLayoutEffect(() => {
     if (!responsive || !containerRef.current) return undefined;
@@ -193,14 +229,14 @@ export default function OrbitImages({
   }, [designActiveOffset, progress, totalItems]);
 
   useEffect(() => {
-    if (totalItems <= 0) return undefined;
+    if (totalItems <= 0 || presentation === "grid") return undefined;
 
-    let delta = activeIndex - previousIndexRef.current;
+    let delta = safeActiveIndex - previousIndexRef.current;
     if (delta > totalItems / 2) delta -= totalItems;
     if (delta < -totalItems / 2) delta += totalItems;
 
     continuousIndexRef.current += delta;
-    previousIndexRef.current = activeIndex;
+    previousIndexRef.current = safeActiveIndex;
 
     const target =
       designActiveOffset - (continuousIndexRef.current / totalItems) * 100;
@@ -220,19 +256,57 @@ export default function OrbitImages({
 
     return () => controls.stop();
   }, [
-    activeIndex,
     designActiveOffset,
+    presentation,
     progress,
     reducedMotion,
+    safeActiveIndex,
     totalItems,
     transitionDuration,
   ]);
+
+  if (presentation === "grid") {
+    return (
+      <div
+        ref={containerRef}
+        className={`orbit-container orbit-container--grid ${className}`.trim()}
+        data-orbit-count={totalItems}
+        data-orbit-layout="grid"
+      >
+        <div className="orbit-grid">
+          {gridItems.map(({ item, index }) => {
+            const state = getOrbitItemVisualState(
+              index,
+              safeActiveIndex,
+              totalItems,
+            );
+
+            return (
+              <div
+                key={item?.id ?? item?.key ?? index}
+                className={`orbit-grid-item ${state.isActive ? "is-active" : ""}`.trim()}
+                data-orbit-distance={state.distance}
+              >
+                <div className="orbit-grid-item__content">
+                  {renderItem
+                    ? renderItem(item, index, state)
+                    : item}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
       ref={containerRef}
       className={`orbit-container ${className}`.trim()}
       style={{ aspectRatio: `${designWidth} / ${designHeight}` }}
+      data-orbit-count={totalItems}
+      data-orbit-layout="orbit"
     >
       <div
         className={`orbit-scaling-container ${responsive ? "orbit-scaling-container--responsive" : ""}`.trim()}
@@ -269,19 +343,19 @@ export default function OrbitImages({
 
           {sourceItems.map((item, index) => (
             <OrbitItem
-              key={item?.key ?? index}
+              key={item?.id ?? item?.key ?? index}
               item={item}
               index={index}
               totalItems={totalItems}
-              activeIndex={activeIndex}
+              activeIndex={safeActiveIndex}
               path={path}
               itemWidth={designItemWidth}
               itemHeight={designItemHeight}
               rotation={rotation}
               progress={progress}
               fill={fill}
-              visibleRadius={visibleRadius}
               renderItem={renderItem}
+              reducedMotion={reducedMotion}
             />
           ))}
         </div>

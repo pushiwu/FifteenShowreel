@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
-import { motion } from "motion/react";
 
 const styles = {
   wrapper: {
@@ -306,12 +305,14 @@ export default function DecryptedText({
 
   useEffect(() => {
     if (animateOn !== "view" && animateOn !== "inViewHover") return undefined;
+    if (hasAnimated) return undefined;
 
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting && !hasAnimated) {
+        if (entry.isIntersecting) {
           triggerDecrypt();
           setHasAnimated(true);
+          observer.disconnect();
         }
       });
     };
@@ -325,7 +326,7 @@ export default function DecryptedText({
     if (currentRef) observer.observe(currentRef);
 
     return () => {
-      if (currentRef) observer.unobserve(currentRef);
+      observer.disconnect();
     };
   }, [animateOn, hasAnimated, triggerDecrypt]);
 
@@ -353,7 +354,7 @@ export default function DecryptedText({
         : {};
 
   return (
-    <motion.span
+    <span
       className={parentClassName}
       ref={containerRef}
       style={styles.wrapper}
@@ -376,6 +377,6 @@ export default function DecryptedText({
           );
         })}
       </span>
-    </motion.span>
+    </span>
   );
 }
