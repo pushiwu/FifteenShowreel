@@ -1,134 +1,85 @@
 import "./About.css";
 import AsciiPortrait from "../components/AsciiPortrait";
 import GlareHover from "../components/GlareHover";
-import TextReveal from "../components/TextReveal";
+import SectionMotion from "../components/SectionMotion";
 
 const overviewLinks = [
-  {
-    href: "#projects",
-    number: "03",
-    zh: "\u6838\u5fc3\u4f5c\u54c1",
-    en: "Selected Works",
-  },
-  {
-    href: "#expertise",
-    number: "04",
-    zh: "\u5de5\u4f5c\u7ef4\u5ea6",
-    en: "Working Dimensions",
-  },
-  {
-    href: "#resume",
-    number: "10",
-    zh: "\u5956\u9879\u4e0e\u5165\u56f4",
-    en: "Awards & Selections",
-  },
+  { href: "#projects", number: "03", zh: "核心作品", en: "Selected Works" },
+  { href: "#expertise", number: "04", zh: "工作维度", en: "Working Dimensions" },
+  { href: "#resume", number: "10", zh: "奖项与入围", en: "Awards & Selections" },
 ];
 
 const statementParagraphs = [
   {
-    zh: "\u6211\u59cb\u7ec8\u76f8\u4fe1\uff0c\u5f53\u4e0b\u7684\u72b6\u6001\u5148\u4e8e\u9648\u8ff0\u3002\u8bb8\u591a\u771f\u6b63\u52a8\u4eba\u7684\u4e1c\u897f\uff0c\u5e76\u4e0d\u6025\u4e8e\u88ab\u8bf4\u660e\uff0c\u5b83\u9996\u5148\u505c\u7559\u5728\u4eba\u7684\u795e\u60c5\u3001\u52a8\u4f5c\u3001\u505c\u987f\u4e0e\u6c89\u9ed8\u91cc\u3002\u5f53\u72b6\u6001\u88ab\u51c6\u786e\u6355\u6349\uff0c\u6545\u4e8b\u4fbf\u4f1a\u81ea\u7136\u751f\u957f\u3002",
+    zh: "我始终相信，当下的状态先于陈述。许多真正动人的东西，并不急于被说明，它首先停留在人的神情、动作、停顿与沉默里。当状态被准确捕捉，故事便会自然生长。",
     en: "I have always believed that the state of the present precedes explanation. What truly moves us rarely rushes to be articulated; it first remains in a person's expression, movement, pause and silence. When that state is captured precisely, the story begins to grow on its own.",
   },
   {
-    zh: "\u6bd4\u8d77\u76f4\u63a5\u89e3\u91ca\u4eba\u7269\uff0c\u6211\u66f4\u5728\u610f\u753b\u9762\u4e2d\u4eba\u4e0e\u73af\u5883\u4e4b\u95f4\u7684\u5173\u7cfb\u3002\u5bf9\u6211\u6765\u8bf4\uff0c\u955c\u5934\u4e0d\u662f\u4e3a\u4e86\u5c55\u793a\uff0c\u800c\u662f\u4e3a\u4e86\u7559\u4e0b\u65e5\u5e38\u4e2d\u8f6c\u77ac\u5373\u901d\u7684\u65f6\u523b\uff1a\u5149\u7ebf\u63a0\u8fc7\u9762\u5b54\u65f6\u7684\u8fdf\u7591\uff0c\u7a7a\u95f4\u6c89\u9ed8\u4e0b\u6765\u65f6\u7684\u5f20\u529b\uff0c\u4ee5\u53ca\u60c5\u7eea\u5c1a\u672a\u6765\u5f97\u53ca\u547d\u540d\u4fbf\u5df2\u5916\u6ea2\u7684\u75d5\u8ff9\u3002",
+    zh: "比起直接解释人物，我更在意画面中人与环境之间的关系。对我来说，镜头不是为了展示，而是为了留下日常中转瞬即逝的时刻：光线掠过面孔时的迟疑，空间沉默下来时的张力，以及情绪尚未来得及命名便已外溢的痕迹。",
     en: "Rather than explaining a character directly, I care more about the relationship between people and their surroundings within the frame. For me, the camera is not there to display, but to preserve moments that vanish almost as soon as they appear: hesitation as light crosses a face, tension as a space falls silent, and emotion spilling outward before it can be named.",
   },
   {
-    zh: "\u4eba\u7269\u5e38\u5e38\u662f\u73af\u5883\u7684\u7ed3\u679c\uff0c\u800c\u73af\u5883\u4e5f\u4e0d\u4ec5\u662f\u7a7a\u95f4\u672c\u8eab\uff0c\u5b83\u5305\u542b\u5149\u7ebf\u3001\u7a7a\u6c14\u3001\u58f0\u97f3\uff0c\u4ee5\u53ca\u60c5\u7eea\u5728\u5176\u4e2d\u6d41\u52a8\u7684\u65b9\u5f0f\u3002\u521b\u4f5c\u4e0d\u662f\u5957\u7528\u56fa\u5b9a\u7684\u65b9\u6cd5\uff0c\u800c\u662f\u5728\u5177\u4f53\u7684\u4eba\u3001\u7a7a\u95f4\u4e0e\u60c5\u7eea\u4e4b\u4e2d\uff0c\u627e\u5230\u90a3\u4e2a\u6545\u4e8b\u771f\u6b63\u9002\u5408\u88ab\u89c2\u770b\u7684\u65b9\u5f0f\u3002",
+    zh: "人物常常是环境的结果，而环境也不仅是空间本身，它包含光线、空气、声音，以及情绪在其中流动的方式。创作不是套用固定的方法，而是在具体的人、空间与情绪之中，找到那个故事真正适合被观看的方式。",
     en: "People are often shaped by their environments, and environment is more than physical space. It includes light, air, sound and the way emotion moves through them. Creation is not the application of a fixed method, but the search, within a specific person, space and feeling, for the way a story truly asks to be seen.",
   },
 ];
 
 export default function About() {
   return (
-    <section className="about" id="about">
-      <div className="container about-layout">
-        <div className="about-content">
-          <p className="section-label">
-            <TextReveal text="Statement / \u521b\u4f5c\u9648\u8ff0" animateOn="view" speed={18} />
-          </p>
-          <h2 className="section-title">
-            <TextReveal
-              text={"\u72b6\u6001\u5148\u4e8e\u9648\u8ff0"}
-              animateOn="view"
-              speed={16}
-            />
-          </h2>
-          <div className="about-copy">
-            {statementParagraphs.map((paragraph) => (
-              <div className="about-copy-pair" key={paragraph.zh}>
-                <p>
-                  <TextReveal text={paragraph.zh} animateOn="view" speed={10} />
-                </p>
-                <p className="about-copy-en">
-                  <TextReveal
-                    text={paragraph.en}
-                    animateOn="view"
-                    sequential={false}
-                    speed={10}
-                  />
-                </p>
+    <SectionMotion parallaxSelector=".about-media-parallax" start="top 78%">
+      <section className="about" id="about">
+        <div className="container about-layout">
+          <div className="about-content">
+            <p data-motion="title" className="motion-display-title">STATEMENT</p>
+            <h2 data-motion="heading" className="section-title">状态先于陈述</h2>
+            <div className="about-copy">
+              {statementParagraphs.map((paragraph) => (
+                <div data-motion="copy" className="about-copy-pair" key={paragraph.zh}>
+                  <p>{paragraph.zh}</p>
+                  <p className="about-copy-en">{paragraph.en}</p>
+                </div>
+              ))}
+            </div>
+
+            <nav data-motion="cards" className="about-overview-links" aria-label="Portfolio overview">
+              {overviewLinks.map((item) => (
+                <GlareHover
+                  as="a"
+                  className="about-overview-link"
+                  href={item.href}
+                  key={item.href}
+                  width="100%"
+                  height="auto"
+                  background="transparent"
+                  borderRadius="0px"
+                  borderColor="transparent"
+                  glareColor="#d9d9d9"
+                  glareOpacity={0.14}
+                  glareAngle={-28}
+                  glareSize={240}
+                  transitionDuration={900}
+                >
+                  <span className="about-overview-number">{item.number}</span>
+                  <span className="about-overview-copy"><strong>{item.zh}</strong><small>{item.en}</small></span>
+                  <span className="about-overview-arrow" aria-hidden="true">&gt;</span>
+                </GlareHover>
+              ))}
+            </nav>
+          </div>
+
+          <div data-motion="media" className="about-media">
+            <div className="about-media-parallax">
+              <div className="about-visual">
+                <span className="about-visual-glow" aria-hidden="true" />
+                <AsciiPortrait className="about-image" imageClassName="about-image-fallback" src="/about-profile-cutout.webp" alt="蒲师武" />
+                <span data-motion="meta" className="about-visual-caption">
+                  Cinematographer / Gaffer / Camera Operator / 1st AC / DIT
+                </span>
               </div>
-            ))}
-          </div>
-
-          <nav className="about-overview-links" aria-label="Portfolio overview">
-            {overviewLinks.map((item) => (
-              <GlareHover
-                as="a"
-                className="about-overview-link"
-                href={item.href}
-                key={item.href}
-                width="100%"
-                height="auto"
-                background="transparent"
-                borderRadius="0px"
-                borderColor="transparent"
-                glareColor="#d9d9d9"
-                glareOpacity={0.14}
-                glareAngle={-28}
-                glareSize={240}
-                transitionDuration={900}
-              >
-                <span className="about-overview-number">
-                  <TextReveal text={item.number} animateOn="view" sequential={false} speed={14} />
-                </span>
-                <span className="about-overview-copy">
-                  <strong>
-                    <TextReveal text={item.zh} animateOn="view" speed={14} />
-                  </strong>
-                  <small>
-                    <TextReveal text={item.en} animateOn="view" sequential={false} speed={12} />
-                  </small>
-                </span>
-                <span className="about-overview-arrow" aria-hidden="true">
-                  &gt;
-                </span>
-              </GlareHover>
-            ))}
-          </nav>
-        </div>
-
-        <div className="about-media">
-          <div className="about-visual">
-            <span className="about-visual-glow" aria-hidden="true" />
-            <AsciiPortrait
-              className="about-image"
-              imageClassName="about-image-fallback"
-              src="/about-profile.webp"
-              alt="\u84b2\u5e08\u6b66"
-            />
-            <span className="about-visual-caption">
-              <TextReveal
-                text="Cinematographer / Gaffer / Camera Operator / 1st AC / DIT"
-                animateOn="view"
-                sequential={false}
-                speed={12}
-              />
-            </span>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </SectionMotion>
   );
 }

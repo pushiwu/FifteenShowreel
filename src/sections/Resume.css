@@ -15,6 +15,14 @@
   align-self: start;
 }
 
+.resume-heading-motion {
+  min-width: 0;
+}
+
+.resume-heading .motion-display-title {
+  margin-bottom: 10px;
+}
+
 .resume-content {
   min-width: 0;
 }

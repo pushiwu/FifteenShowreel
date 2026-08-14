@@ -120,8 +120,11 @@ const maiMiaoGrowthGalleryImages = [
   "/projects/mai-miao-growth/20.jpg",
 ];
 
-const maiMiaoGrowthCover =
-  maiMiaoGrowthGalleryImages[Math.floor(Math.random() * maiMiaoGrowthGalleryImages.length)];
+const getVideoSegments = (slug, count) =>
+  Array.from(
+    { length: count },
+    (_, index) => `/projects/web-video/${slug}/segment-${String(index + 1).padStart(2, "0")}.mp4`,
+  );
 
 const projectRecords = [
   {
@@ -129,8 +132,8 @@ const projectRecords = [
     layer: "core",
     title: "远山不扰",
     titleEn: "Distant Mountains",
-    role: "数字影像工程师",
-    roleEn: "Digital Imaging Technician",
+    role: "制片 / 数字影像工程师",
+    roleEn: "Producer / Digital Imaging Technician",
     institution: "个人作品",
     institutionEn: "Independent Work",
     format: "剧情短片",
@@ -186,7 +189,7 @@ const projectRecords = [
     formatEn: "Advertising TVC",
     image: "/projects/p9-featured.jpg",
     poster: "/projects/p9-featured.jpg",
-    video: "/projects/bihua.mp4",
+    videoSegments: getVideoSegments("bihua", 2),
   },
   {
     id: 2,
@@ -201,7 +204,7 @@ const projectRecords = [
     formatEn: "Narrative Short Film",
     image: "/projects/p2-featured.jpg",
     poster: "/projects/p2-featured.jpg",
-    video: "/projects/wilderness-drums.mp4",
+    videoSegments: getVideoSegments("wilderness-drums", 2),
   },
   {
     id: 3,
@@ -215,7 +218,7 @@ const projectRecords = [
     format: "\u5b9e\u9a8c\u77ed\u7247",
     formatEn: "Experimental Short Film",
     poster: "/projects/posters/heartbeat-metronome.jpg",
-    video: "/projects/heartbeat-metronome.mp4",
+    videoSegments: getVideoSegments("heartbeat-metronome", 4),
   },
   {
     id: 4,
@@ -256,7 +259,9 @@ const projectRecords = [
     institutionEn: "Hunan Normal University",
     format: "剧情短片",
     formatEn: "Narrative Short Film",
-    image: maiMiaoGrowthCover,
+    image: "/projects/mai-miao-growth/poster.webp",
+    poster: "/projects/mai-miao-growth/poster.webp",
+    thumbnail: "/projects/mai-miao-growth/poster.webp",
     galleryImages: maiMiaoGrowthGalleryImages,
   },
   {
@@ -271,7 +276,7 @@ const projectRecords = [
     format: "\u5267\u60c5\u77ed\u7247",
     formatEn: "Narrative Short Film",
     poster: "/projects/posters/old-bell.jpg",
-    video: "/projects/old-bell.mp4",
+    videoSegments: getVideoSegments("old-bell", 3),
   },
   {
     id: 6,
@@ -298,8 +303,8 @@ const projectRecords = [
     institutionEn: "Jinan University",
     format: "\u5267\u60c5\u77ed\u7247",
     formatEn: "Narrative Short Film",
-    image: "/projects/a-death/a-death-poster.png",
-    poster: "/projects/a-death/a-death-poster.png",
+    image: "/projects/a-death/a-death-poster.webp",
+    poster: "/projects/a-death/a-death-poster.webp",
     video: "/projects/a-death.mp4",
   },
   {
@@ -384,17 +389,62 @@ const projectRecords = [
   {
     id: 28,
     layer: "archive",
-    textOnly: true,
     title: "悔纪春归",
     titleEn: "Spring Returns, Regrets Remain",
-    role: "待补资料",
-    roleEn: "Materials Pending",
-    institution: "待补资料",
-    institutionEn: "Materials Pending",
-    format: "剧情短片",
-    formatEn: "Narrative Short Film",
-    note: "该项目目前以履历条目收录，完整影像资料将在后续档案更新中补充。",
-    noteEn: "This project is currently presented as a portfolio record. Complete visual materials will be added in a future archive update.",
+    role: "第二摄影助理",
+    roleEn: "2nd Assistant Camera",
+    institution: "武汉传媒学院",
+    institutionEn: "Wuhan University of Communication",
+    format: "短片电影",
+    formatEn: "Short Film",
+    poster: "/projects/web-video/hui-ji-chun-gui/poster.jpg",
+    thumbnail: "/projects/web-video/hui-ji-chun-gui/poster.jpg",
+    videoSegments: getVideoSegments("hui-ji-chun-gui", 12),
+  },
+  {
+    id: 30,
+    layer: "archive",
+    title: "念念",
+    titleEn: "Lingering Thoughts",
+    role: "灯光助理",
+    roleEn: "Lighting Assistant",
+    institution: "上海戏剧学院",
+    institutionEn: "Shanghai Theatre Academy",
+    format: "短片电影",
+    formatEn: "Short Film",
+    poster: "/projects/web-video/nian-nian/poster.jpg",
+    thumbnail: "/projects/web-video/nian-nian/poster.jpg",
+    videoSegments: getVideoSegments("nian-nian", 12),
+  },
+  {
+    id: 31,
+    layer: "archive",
+    title: "情绪封装器",
+    titleEn: "Emotion Encapsulator",
+    role: "导演 / 编剧",
+    roleEn: "Director / Screenwriter",
+    institution: "湖南应用技术学院",
+    institutionEn: "Hunan Applied Technology University",
+    format: "微电影广告",
+    formatEn: "Microfilm Advertisement",
+    poster: "/projects/web-video/emotion-encapsulator/poster.jpg",
+    thumbnail: "/projects/web-video/emotion-encapsulator/poster.jpg",
+    videoSegments: getVideoSegments("emotion-encapsulator", 2),
+  },
+  {
+    id: 32,
+    layer: "archive",
+    title: "逐光",
+    titleEn: "Chasing Light",
+    role: "摄影",
+    roleEn: "Cinematographer",
+    institution: "商业项目",
+    institutionEn: "Commercial Project",
+    format: "微电影公益广告",
+    formatEn: "Public Service Microfilm",
+    poster: "/projects/web-video/chasing-light/poster.jpg",
+    thumbnail: "/projects/web-video/chasing-light/poster.jpg",
+    videoSegments: getVideoSegments("chasing-light", 3),
   },
   {
     id: 16,
@@ -409,7 +459,7 @@ const projectRecords = [
     formatEn: "Narrative Short Film",
     image: "/projects/land-dadia/land-dadia-poster.jpg",
     poster: "/projects/land-dadia/land-dadia-poster.jpg",
-    video: "/projects/land-dadia/land-dadia.mp4",
+    videoSegments: getVideoSegments("land-dadia", 8),
   },
   {
     id: 17,
@@ -424,7 +474,7 @@ const projectRecords = [
     formatEn: "Narrative Short Film",
     image: "/projects/family-portrait/family-portrait-poster.jpg",
     poster: "/projects/family-portrait/family-portrait-poster.jpg",
-    video: "/projects/family-portrait/family-portrait.mp4",
+    videoSegments: getVideoSegments("family-portrait", 5),
   },
   {
     id: 18,
@@ -439,7 +489,7 @@ const projectRecords = [
     formatEn: "Public Service Microfilm",
     image: "/projects/listen-archives/listen-archives-poster.jpg",
     poster: "/projects/listen-archives/listen-archives-poster.jpg",
-    video: "/projects/listen-archives/listen-archives.mp4",
+    videoSegments: getVideoSegments("listen-archives", 2),
   },
   {
     id: 19,
@@ -454,7 +504,7 @@ const projectRecords = [
     formatEn: "Short Film",
     image: "/projects/after-tomorrow/after-tomorrow-poster.jpg",
     poster: "/projects/after-tomorrow/after-tomorrow-poster.jpg",
-    video: "/projects/after-tomorrow/after-tomorrow.mp4",
+    videoSegments: getVideoSegments("after-tomorrow", 7),
   },
   {
     id: 20,
@@ -469,7 +519,7 @@ const projectRecords = [
     formatEn: "Short Film",
     image: "/projects/tangled/tangled-poster.png",
     poster: "/projects/tangled/tangled-poster.png",
-    video: "/projects/tangled/tangled.mp4",
+    videoSegments: getVideoSegments("tangled", 4),
   },
   {
     id: 10,
@@ -484,7 +534,7 @@ const projectRecords = [
     formatEn: "Narrative Short Film",
     image: "/projects/p10-featured.jpg",
     poster: "/projects/p10-featured.jpg",
-    video: "/projects/base-tone.mp4",
+    videoSegments: getVideoSegments("base-tone", 5),
   },
   {
     id: 11,
@@ -498,7 +548,7 @@ const projectRecords = [
     format: "\u5ba3\u4f20\u7247",
     formatEn: "Promotional Film",
     poster: "/projects/posters/village-song.jpg",
-    video: "/projects/village-song.mp4",
+    videoSegments: getVideoSegments("village-song", 3),
   },
   {
     id: 12,
@@ -512,7 +562,7 @@ const projectRecords = [
     format: "\u6e56\u5357\u5de5\u827a\u7f8e\u672f\u804c\u4e1a\u5927\u5b66 25 \u5e74\u6bd5\u4e1a\u5b63 MV",
     formatEn: "Hunan University of Arts and Crafts 2025 Graduation Season MV",
     poster: "/projects/posters/qixia-road-wind.jpg",
-    video: "/projects/qixia-road-wind.mp4",
+    videoSegments: getVideoSegments("qixia-road-wind", 2),
   },
   {
     id: 14,
@@ -545,7 +595,7 @@ const projectRecords = [
 export const projects = projectRecords.map((project) => ({
   ...project,
   thumbnail:
-    project.textOnly || (!project.poster && !project.image)
+    project.thumbnail ?? (project.textOnly || (!project.poster && !project.image)
       ? undefined
-      : `/projects/thumbnails/${project.id}.webp`,
+      : `/projects/thumbnails/${project.id}.webp`),
 }));

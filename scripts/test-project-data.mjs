@@ -11,6 +11,8 @@ test("requested projects keep their intended categories", () => {
   assert.equal(projectById(7)?.layer, "core");
   assert.equal(projectById(29)?.layer, "core");
   assert.equal(projectById(9)?.layer, "extended");
+  assert.equal(projectByTitle("远山不扰")?.role, "制片 / 数字影像工程师");
+  assert.equal(projectByTitle("远山不扰")?.roleEn, "Producer / Digital Imaging Technician");
 });
 
 test("已确认的画廊项目拥有完整双语资料和可访问素材", () => {
@@ -46,7 +48,6 @@ test("文字资料项目不伪造媒体资源并仍可被全部项目展示", ()
     "湖南省益阳市南县检察院MV",
     "湖南省怀化市麻阳县2025文旅宣传片",
     "蜘蛛之丝",
-    "悔纪春归",
   ];
 
   for (const title of textOnlyTitles) {
@@ -60,8 +61,71 @@ test("文字资料项目不伪造媒体资源并仍可被全部项目展示", ()
 
   assert.deepEqual(
     projects.filter((project) => project.textOnly).map((project) => project.id),
-    [23, 24, 25, 26, 27, 28]
+    [23, 24, 25, 26, 27]
   );
+});
+
+test("新增视频项目拥有完整双语资料并从全部项目进入播放弹窗", () => {
+  const expected = [
+    {
+      title: "悔纪春归",
+      titleEn: "Spring Returns, Regrets Remain",
+      role: "第二摄影助理",
+      roleEn: "2nd Assistant Camera",
+      institution: "武汉传媒学院",
+      institutionEn: "Wuhan University of Communication",
+      format: "短片电影",
+      formatEn: "Short Film",
+    },
+    {
+      title: "念念",
+      titleEn: "Lingering Thoughts",
+      role: "灯光助理",
+      roleEn: "Lighting Assistant",
+      institution: "上海戏剧学院",
+      institutionEn: "Shanghai Theatre Academy",
+      format: "短片电影",
+      formatEn: "Short Film",
+    },
+    {
+      title: "情绪封装器",
+      titleEn: "Emotion Encapsulator",
+      role: "导演 / 编剧",
+      roleEn: "Director / Screenwriter",
+      institution: "湖南应用技术学院",
+      institutionEn: "Hunan Applied Technology University",
+      format: "微电影广告",
+      formatEn: "Microfilm Advertisement",
+    },
+    {
+      title: "逐光",
+      titleEn: "Chasing Light",
+      role: "摄影",
+      roleEn: "Cinematographer",
+      institution: "商业项目",
+      institutionEn: "Commercial Project",
+      format: "微电影公益广告",
+      formatEn: "Public Service Microfilm",
+    },
+  ];
+
+  for (const metadata of expected) {
+    const project = projectByTitle(metadata.title);
+    assert.ok(project, `Missing project: ${metadata.title}`);
+    assert.equal(project.layer, "archive", `New project must appear in All: ${metadata.title}`);
+    assert.equal(project.textOnly, undefined, `Playable project cannot be text-only: ${metadata.title}`);
+    for (const [key, value] of Object.entries(metadata)) {
+      assert.equal(project[key], value, `Unexpected ${key}: ${metadata.title}`);
+    }
+    assert.ok(project.video || project.videoSegments?.length, `Missing video: ${metadata.title}`);
+    assert.ok(project.poster, `Missing poster: ${metadata.title}`);
+  }
+});
+
+test("麦苗生长使用用户指定海报作为卡片展示图", () => {
+  const project = projectByTitle("麦苗生长");
+  assert.equal(project.image, "/projects/mai-miao-growth/poster.webp");
+  assert.equal(project.poster, "/projects/mai-miao-growth/poster.webp");
 });
 
 test("所有视频项目都声明静态 poster", () => {

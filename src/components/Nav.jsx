@@ -6,7 +6,7 @@ const links = [
   { href: "#home", label: "\u9996\u9875" },
   { href: "#about", label: "\u521b\u4f5c\u9648\u8ff0" },
   { href: "#projects", label: "\u6838\u5fc3\u4f5c\u54c1" },
-  { href: "#expertise", label: "\u5de5\u4f5c\u65b9\u5f0f" },
+  { href: "#expertise", label: "\u5de5\u4f5c\u7ef4\u5ea6" },
   { href: "#resume", label: "\u5c65\u5386\u5956\u9879" },
 ];
 

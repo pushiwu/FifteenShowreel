@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { gsap } from "gsap";
 import "./Hero.css";
-import TextReveal from "../components/TextReveal";
 
-export default function Hero({ active = true }) {
+export default function Hero({ active = true, heroHandoff = false }) {
+  const rootRef = useRef(null);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -11,13 +12,9 @@ export default function Hero({ active = true }) {
 
     let isInView = true;
     const syncPlayback = () => {
-      if (active && isInView && !document.hidden) {
-        video.play().catch(() => {});
-      } else {
-        video.pause();
-      }
+      if (active && isInView && !document.hidden) video.play().catch(() => {});
+      else video.pause();
     };
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         isInView = entry.isIntersecting;
@@ -26,11 +23,9 @@ export default function Hero({ active = true }) {
       { threshold: 0.08 },
     );
     const handleVisibilityChange = () => syncPlayback();
-
     observer.observe(video);
     document.addEventListener("visibilitychange", handleVisibilityChange);
     syncPlayback();
-
     return () => {
       observer.disconnect();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
@@ -38,11 +33,48 @@ export default function Hero({ active = true }) {
     };
   }, [active]);
 
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return undefined;
+    const context = gsap.context(() => {
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const media = root.querySelector('[data-motion="hero-media"]');
+      const title = root.querySelector('[data-motion="hero-title"]');
+      const english = root.querySelector('[data-motion="hero-english"]');
+      const support = root.querySelectorAll('[data-motion="hero-support"]');
+      const meta = root.querySelectorAll('[data-motion="hero-meta"]');
+
+      if (reducedMotion) {
+        gsap.set([media, title, english, ...support, ...meta], { clearProps: "all" });
+        return;
+      }
+
+      if (!heroHandoff) {
+        gsap.set(media, { scale: 1.1, filter: "brightness(0.52) blur(8px)" });
+        gsap.set(title, { autoAlpha: 0, yPercent: 118, scaleY: 0.55, transformOrigin: "bottom" });
+        gsap.set(english, { autoAlpha: 0, y: 42, scale: 1.28, letterSpacing: "0.38em" });
+        gsap.set([...support, ...meta], { autoAlpha: 0, y: 34 });
+        return;
+      }
+
+      const timeline = gsap.timeline({ defaults: { ease: "power4.out" } });
+      timeline
+        .to(media, { scale: 1, filter: "brightness(1) blur(0px)", duration: 1.8, ease: "power3.inOut" }, 0)
+        .to(title, { autoAlpha: 1, yPercent: 0, scaleY: 1, duration: 1.55, ease: "expo.out" }, 0.18)
+        .to(english, { autoAlpha: 1, y: 0, scale: 1, letterSpacing: "0.22em", duration: 1.42 }, 0.42)
+        .to(support, { autoAlpha: 1, y: 0, duration: 1.05, stagger: 0.1 }, 0.72)
+        .to(meta, { autoAlpha: 1, y: 0, duration: 1.08, stagger: 0.14 }, 0.9);
+      return () => timeline.kill();
+    }, root);
+    return () => context.revert();
+  }, [heroHandoff]);
+
   return (
-    <section className="hero" id="home">
+    <section ref={rootRef} className={`hero ${heroHandoff ? "is-handoff" : "is-waiting"}`} id="home">
       <div className="hero-shell">
         <video
           ref={videoRef}
+          data-motion="hero-media"
           className="hero-video"
           src={active ? "/projects/showreel-web.mp4" : undefined}
           poster="/hero-showreel-poster.jpg"
@@ -57,52 +89,26 @@ export default function Hero({ active = true }) {
         <div className="hero-light" />
 
         <div className="hero-meta-left">
-          <p className="hero-eyebrow">
-            <TextReveal
-              text="State before statement."
-              animateOn="view"
-              sequential={false}
-              speed={16}
-            />
-          </p>
+          <p data-motion="hero-meta" className="hero-eyebrow">State before statement.</p>
         </div>
 
         <div className="hero-copy">
-          <p className="hero-kicker">
-            <TextReveal text="Fifteen Personal Portfolio" animateOn="view" speed={18} />
-          </p>
-          <h1 className="hero-title">
-            <TextReveal text={"\u84b2\u5e08\u6b66"} animateOn="view" speed={16} />
-          </h1>
-          <p className="hero-name-en">
-            <TextReveal text="fifteen" animateOn="view" sequential={false} speed={16} />
-          </p>
-          <div className="hero-role-block">
-            <p className="hero-role-zh">
-              <TextReveal
-                text={"\u6444\u5f71\u3001\u706f\u5149\u3001\u638c\u673a\u3001\u7b2c\u4e00\u6444\u5f71\u52a9\u7406\u3001\u6570\u5b57\u5f71\u50cf\u5de5\u7a0b\u5e08"}
-                animateOn="view"
-                speed={14}
-              />
-            </p>
-            <p className="hero-role-en">
-              <TextReveal
-                text="Cinematographer / Gaffer / Camera Operator / 1st AC / DIT"
-                animateOn="view"
-                sequential={false}
-                speed={14}
-              />
-            </p>
+          <p data-motion="hero-support" className="hero-kicker">Fifteen Personal Portfolio</p>
+          <div className="hero-title-mask">
+            <h1 data-motion="hero-title" className="hero-title">蒲师武</h1>
+          </div>
+          <div className="hero-name-mask">
+            <p data-motion="hero-english" className="hero-name-en">fifteen</p>
+          </div>
+          <div data-motion="hero-support" className="hero-role-block">
+            <p className="hero-role-zh">摄影、灯光、掌机、第一摄影助理、数字影像工程师</p>
+            <p className="hero-role-en">Cinematographer / Gaffer / Camera Operator / 1st AC / DIT</p>
           </div>
         </div>
 
         <div className="hero-meta-right">
-          <p className="hero-statement">
-            <TextReveal
-              text={"\u5f53\u4e0b\u7684\u72b6\u6001\uff0c\u5148\u4e8e\u9648\u8ff0\u3002\u72b6\u6001\u4e00\u65e6\u7cbe\u51c6\uff0c\u6545\u4e8b\u4fbf\u81ea\u7531\u5ef6\u5c55\u3002"}
-              animateOn="view"
-              speed={12}
-            />
+          <p data-motion="hero-meta" className="hero-statement">
+            当下的状态，先于陈述。状态一旦精准，故事便自由延展。
           </p>
         </div>
       </div>

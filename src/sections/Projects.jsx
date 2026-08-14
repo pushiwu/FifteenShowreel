@@ -8,6 +8,7 @@ import {
 import { createPortal } from "react-dom";
 import GlareHover from "../components/GlareHover";
 import OrbitImages from "../components/OrbitImages";
+import SectionMotion from "../components/SectionMotion";
 import TextReveal from "../components/TextReveal";
 import { projects } from "../data/projects";
 import {
@@ -97,6 +98,7 @@ export default function Projects() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [openedProjectId, setOpenedProjectId] = useState(null);
+  const [videoSegmentIndex, setVideoSegmentIndex] = useState(0);
   const [isDocumentVisible, setIsDocumentVisible] = useState(
     () => !document.hidden
   );
@@ -116,6 +118,7 @@ export default function Projects() {
   const lastWheelSwitchAtRef = useRef(null);
   const projectsCurveRef = useRef(null);
   const projectsSectionRef = useRef(null);
+  const modalVideoRef = useRef(null);
 
   const visibleProjects = useMemo(() => {
     if (viewMode === "all") {
@@ -225,6 +228,16 @@ export default function Projects() {
     };
   }, [openedProjectId]);
 
+  useEffect(() => {
+    setVideoSegmentIndex(0);
+  }, [openedProjectId]);
+
+  useEffect(() => {
+    if (videoSegmentIndex > 0) {
+      modalVideoRef.current?.play().catch(() => {});
+    }
+  }, [videoSegmentIndex]);
+
   useEffect(
     () => () => {
       if (mouseGestureTimerRef.current !== null) {
@@ -246,6 +259,8 @@ export default function Projects() {
     () => projects.find((project) => project.id === openedProjectId) ?? null,
     [openedProjectId]
   );
+  const openedVideoSegments = openedProject?.videoSegments ??
+    (openedProject?.video ? [openedProject.video] : []);
 
   const handleProjectClick = (project, index) => {
     setActiveIndex(index);
@@ -399,14 +414,15 @@ export default function Projects() {
   }, []);
 
   return (
-    <section ref={projectsSectionRef} className="projects" id="projects">
+    <SectionMotion start="top 76%">
+      <section ref={projectsSectionRef} className="projects" id="projects">
       <div className="container">
         <div
           className="projects-stage"
           onMouseEnter={handleStageMouseEnter}
           onMouseLeave={handleStageMouseLeave}
         >
-          <div className="projects-view-switcher" role="tablist" aria-label="Project categories">
+          <div data-motion="meta" className="projects-view-switcher" role="tablist" aria-label="Project categories">
             {[
               { value: "core", label: "\u6838\u5fc3\u4f5c\u54c1", en: "Core" },
               { value: "extended", label: "\u5ef6\u5c55\u9879\u76ee", en: "Extended" },
@@ -428,6 +444,8 @@ export default function Projects() {
 
           <div
             ref={projectsCurveRef}
+            data-motion="media"
+            data-motion-scope="projects-orbit"
             className="projects-curve"
             aria-label="Past works carousel"
             onMouseMove={handleProjectsMouseMove}
@@ -460,7 +478,7 @@ export default function Projects() {
                   key={project.id}
                   type="button"
                   className={`projects-orbit-item ${isActive ? "is-active" : ""} ${
-                    project.video ? "is-playable" : ""
+                    project.video || project.videoSegments?.length ? "is-playable" : ""
                   }`}
                   onClick={() => handleProjectClick(project, index)}
                   aria-pressed={isActive}
@@ -486,7 +504,7 @@ export default function Projects() {
                         Current / {"\u5f53\u524d"}
                       </span>
                     ) : null}
-                    {project.video ? (
+                    {project.video || project.videoSegments?.length ? (
                       <span className="projects-orbit-play">
                         <span className="projects-orbit-play-icon" />
                         <span className="projects-orbit-play-copy">
@@ -523,86 +541,51 @@ export default function Projects() {
           </div>
 
           <div className="projects-stage-copy">
-            <p className="section-label projects-stage-label">
-              <TextReveal text="Selected Works / \u7cbe\u9009\u4f5c\u54c1" animateOn="view" speed={18} />
+            <p data-motion="title" className="motion-display-title projects-stage-display">
+              SELECTED WORKS
             </p>
-            <h2 className="section-title projects-stage-title">
-              <TextReveal text={"\u4f5c\u54c1"} animateOn="view" speed={16} />
+            <h2 data-motion="heading" className="section-title projects-stage-title">
+              {"\u4f5c\u54c1"}
             </h2>
-            <p className="projects-stage-subtitle">
-              <TextReveal
-                text="Selected works / Image, light, space and the state between them"
-                animateOn="view"
-                sequential={false}
-                speed={12}
-              />
+            <p data-motion="copy" className="projects-stage-subtitle">
+              Selected works / Image, light, space and the state between them
             </p>
           </div>
 
-          <div className="projects-stage-detail" aria-live="polite">
+          <div data-motion="copy" data-motion-scope="projects-detail" className="projects-stage-detail" aria-live="polite">
             <p className="projects-stage-detail-count">
               <span>Current / {"\u5f53\u524d"}</span>
-              <TextReveal
-                text={`${String(safeActiveIndex + 1).padStart(2, "0")} / ${String(visibleProjects.length).padStart(2, "0")}`}
-                animateOn="view"
-                sequential={false}
-                speed={14}
-              />
+              <span>{`${String(safeActiveIndex + 1).padStart(2, "0")} / ${String(visibleProjects.length).padStart(2, "0")}`}</span>
             </p>
 
             <div className="projects-stage-detail-main">
               <h3 className="projects-stage-detail-title">
-                <TextReveal text={activeProject.title} animateOn="view" speed={16} />
+                {activeProject.title}
               </h3>
               <p className="projects-stage-detail-title-en">
-                <TextReveal
-                  text={activeProject.titleEn}
-                  animateOn="view"
-                  sequential={false}
-                  speed={13}
-                />
+                {activeProject.titleEn}
               </p>
             </div>
 
             <div className="projects-stage-detail-meta">
               <p>
                 <span>Role / {"\u5c97\u4f4d"}</span>
-                <TextReveal
-                  text={`${activeProject.role} / ${activeProject.roleEn}`}
-                  animateOn="view"
-                  sequential={false}
-                  speed={11}
-                />
+                {`${activeProject.role} / ${activeProject.roleEn}`}
               </p>
               <p>
                 <span>Institution / {"\u9879\u76ee\u6765\u6e90"}</span>
-                <TextReveal
-                  text={`${activeProject.institution} / ${activeProject.institutionEn}`}
-                  animateOn="view"
-                  sequential={false}
-                  speed={11}
-                />
+                {`${activeProject.institution} / ${activeProject.institutionEn}`}
               </p>
               <p>
                 <span>Format / {"\u7c7b\u578b"}</span>
-                <TextReveal
-                  text={`${activeProject.format} / ${activeProject.formatEn}`}
-                  animateOn="view"
-                  sequential={false}
-                  speed={11}
-                />
+                {`${activeProject.format} / ${activeProject.formatEn}`}
               </p>
               {activeProject.note ? (
                 <p className="projects-stage-detail-note">
-                  <TextReveal text={activeProject.note} animateOn="view" speed={9} />
+                  {activeProject.note}
                   {activeProject.noteEn ? (
                     <span className="projects-stage-detail-note-en">
-                      <TextReveal
-                        text={activeProject.noteEn}
-                        animateOn="view"
-                        sequential={false}
-                        speed={9}
-                      />
+                      {activeProject.noteEn}
                     </span>
                   ) : null}
                 </p>
@@ -619,7 +602,7 @@ export default function Projects() {
                 Projects without available media
               </p>
             </div>
-            <div className="projects-text-only-list">
+            <div data-motion="cards" className="projects-text-only-list">
               {textOnlyProjects.map((project, index) => (
                 <GlareHover
                   as="button"
@@ -703,15 +686,22 @@ export default function Projects() {
                         </figure>
                       ))}
                     </div>
-                  ) : openedProject.video ? (
+                  ) : openedVideoSegments.length ? (
                     <video
+                      ref={modalVideoRef}
+                      key={`${openedProject.id}-${videoSegmentIndex}`}
                       className="projects-modal-video"
-                      src={openedProject.video}
+                      src={openedVideoSegments[videoSegmentIndex]}
                       poster={openedProject.poster ?? openedProject.image}
                       controls
                       autoPlay
                       playsInline
                       preload="metadata"
+                      onEnded={() => {
+                        if (videoSegmentIndex < openedVideoSegments.length - 1) {
+                          setVideoSegmentIndex((current) => current + 1);
+                        }
+                      }}
                     />
                   ) : openedProject.image ? (
                     <img
@@ -767,6 +757,7 @@ export default function Projects() {
             document.body
           )
         : null}
-    </section>
+      </section>
+    </SectionMotion>
   );
 }

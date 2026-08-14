@@ -1,36 +1,54 @@
-# Fifteen Pu Portfolio
+# FifteenShowreel
 
-当前维护入口是本目录。原始视频和历史预览图不放在 `public/`，以免 Vite 在构建时复制不需要的资源。
+蒲师武个人影像作品集，部署上线版本 `1.0.0`。网站以 React、Vite、GSAP 与 Canvas2D 构建，包含电影化 opening、滚动叙事、动态人物 ASCII 轮廓及项目视频播放页。
 
-## Commands
+## 本地运行
 
 ```powershell
 npm.cmd install
 npm.cmd run dev
-npm.cmd run test:assets
-npm.cmd run build
-npm.cmd run preview
 ```
 
-## Asset Rules
+默认开发地址由 Vite 输出。当前项目在 Windows 环境中建议使用 `npm.cmd`，避免 PowerShell 执行策略拦截 `npm.ps1`。
 
-- `public/` 只保留页面实际引用的静态资源和压缩视频。
-- 项目卡片使用静态 `poster`，不会为缩略图创建隐藏 `<video>`。
-- 原始视频位于上级 `03_项目素材/`，历史发布资源位于上级 `04_简历与备份/网站发布历史/`。
+## 发布检查
 
-## Template Notes
+```powershell
+npm.cmd run test:data
+npm.cmd run test:assets
+npm.cmd run test:performance
+npm.cmd run test:interaction
+npm.cmd run test:orbit
+npm.cmd run build
+```
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+`test:assets` 会递归检查 `public/`，并阻止任何超过 Cloudflare Pages `25 MiB` 单文件上限的资源进入发布版本。
 
-Currently, two official plugins are available:
+## Cloudflare Pages
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Framework preset: `Vite`
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Root directory: `/`
+- Production branch: `main`
+- Node.js: `22.16.0`
 
-## React Compiler
+媒体文件由 Git LFS 管理。Cloudflare 连接 GitHub 私有仓库时，需要确保 GitHub LFS 存储与下载流量仍有可用额度，否则构建阶段无法取回视频资源。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+也可以在本地构建后使用 Wrangler 直接部署：
 
-## Expanding the ESLint configuration
+```powershell
+npm.cmd run build
+npx wrangler pages deploy dist --project-name fifteen-showreel
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 媒体规则
+
+- 页面卡片只加载静态海报，不为缩略图创建隐藏视频。
+- 长片使用低于 `25 MiB` 的连续 MP4 分段，播放器在片段结束时自动续播。
+- 原始高码率素材不放入 `public/`，可逆归档位于项目目录外的 `.release-source-backup-v1`。
+- `public/projects/web-video/` 是网站实际交付媒体，不应在发布前删除。
+
+## 版本说明
+
+完整更新内容见 [RELEASE_NOTES.md](./RELEASE_NOTES.md)。

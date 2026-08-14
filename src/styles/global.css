@@ -36,6 +36,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -118,6 +119,27 @@ video {
   font-size: 12px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
+}
+
+.motion-display-title {
+  max-width: 100%;
+  overflow: hidden;
+  color: rgba(242, 242, 242, 0.12);
+  font-family: var(--font-sans);
+  font-size: clamp(58px, 8.6vw, 150px);
+  font-weight: 800;
+  line-height: 0.78;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform-origin: left center;
+}
+
+@media (max-width: 700px) {
+  .motion-display-title {
+    font-size: clamp(44px, 14vw, 72px);
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }
 
 .section-title {
