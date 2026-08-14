@@ -66,9 +66,10 @@
   border-bottom-color: var(--accent);
 }
 
-.projects-stage-label {
-  margin-bottom: 18px;
+.projects-stage-display {
+  margin: 0 auto 24px;
   text-align: center;
+  transform-origin: center;
 }
 
 .projects-stage-title {
@@ -94,6 +95,7 @@
   margin-top: 16px;
   padding: 0 8px;
   overflow: visible;
+  transform-origin: center center;
 }
 
 .projects-orbit {
@@ -290,7 +292,7 @@
 
 .projects-orbit--all .projects-orbit-title-en,
 .projects-orbit--all .projects-orbit-index {
-  font-size: 7px;
+  font-size: 9px;
   letter-spacing: 0.1em;
 }
 
@@ -298,7 +300,7 @@
   top: 10px;
   left: 10px;
   padding: 5px 7px;
-  font-size: 6px;
+  font-size: 9px;
 }
 
 .projects-orbit--all .projects-orbit-play {
@@ -941,6 +943,11 @@
 
   .projects-stage-title {
     font-size: clamp(58px, 14vw, 92px);
+  }
+
+  .projects-stage-display {
+    margin-bottom: 18px;
+    font-size: clamp(42px, 13vw, 68px);
   }
 
   .projects-modal {

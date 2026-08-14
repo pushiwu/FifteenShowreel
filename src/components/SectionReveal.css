@@ -8,12 +8,9 @@
 .section-reveal__surface {
   position: relative;
   width: 100%;
-  transform-origin: center top;
-  will-change: opacity, transform, clip-path;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .section-reveal__surface {
-    will-change: auto;
-  }
+.section-motion {
+  position: relative;
+  width: 100%;
 }

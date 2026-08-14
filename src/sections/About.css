@@ -25,6 +25,10 @@
   padding: 24px 0 34px;
 }
 
+.about-content .motion-display-title {
+  margin-bottom: 10px;
+}
+
 .about-copy {
   max-width: 690px;
   margin-top: 34px;
@@ -56,6 +60,12 @@
   overflow: clip;
 }
 
+.about-media-parallax {
+  position: absolute;
+  inset: -5% 0;
+  will-change: transform;
+}
+
 .about-visual {
   position: absolute;
   inset: 0;
@@ -74,12 +84,12 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
-    rgba(27, 75, 244, 0.26) 0%,
-    rgba(27, 75, 244, 0.11) 38%,
+    rgba(224, 224, 224, 0.12) 0%,
+    rgba(160, 160, 160, 0.055) 38%,
     transparent 74%
   );
   filter: blur(42px);
-  opacity: 0.9;
+  opacity: 0.58;
   transform: rotate(-12deg);
   z-index: -1;
 }
@@ -94,6 +104,10 @@
   object-fit: contain;
   object-position: center;
   filter: saturate(0.92) contrast(1.04);
+}
+
+.about-image .ascii-portrait__canvas {
+  filter: brightness(1.52) contrast(1.03);
 }
 
 .about-visual-caption {

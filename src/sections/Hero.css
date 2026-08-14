@@ -31,6 +31,7 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
+  will-change: transform, filter;
 }
 
 .hero-bg-layer {
@@ -208,6 +209,20 @@
   letter-spacing: -0.055em;
 }
 
+.hero-title-mask,
+.hero-name-mask {
+  overflow: hidden;
+}
+
+.hero-title,
+.hero-name-en,
+.hero-kicker,
+.hero-role-block,
+.hero-eyebrow,
+.hero-statement {
+  will-change: transform, opacity;
+}
+
 .hero-name-en {
   margin-top: 10px;
   color: rgba(255, 255, 255, 0.5);
@@ -330,5 +345,86 @@
     right: 24px;
     bottom: 28px;
     width: min(42vw, 340px);
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    min-height: 100svh;
+    padding: 126px 0 28px;
+    align-items: flex-start;
+  }
+
+  .hero-shell {
+    width: 100%;
+    min-height: max(690px, calc(100svh - 154px));
+  }
+
+  .hero-video {
+    object-position: center;
+  }
+
+  .hero-meta-left {
+    top: 28px;
+    left: 24px;
+    max-width: 86px;
+  }
+
+  .hero-eyebrow {
+    font-size: 9px;
+  }
+
+  .hero-copy {
+    right: 24px;
+    bottom: 24px;
+    left: 24px;
+    max-width: none;
+  }
+
+  .hero-kicker {
+    margin-bottom: 12px;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+  }
+
+  .hero-title {
+    font-size: clamp(52px, 16vw, 68px);
+    line-height: 0.9;
+  }
+
+  .hero-name-en {
+    margin-top: 7px;
+    font-size: 17px;
+  }
+
+  .hero-role-block {
+    max-width: 100%;
+    margin-top: 18px;
+    padding-right: 6px;
+  }
+
+  .hero-role-zh {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .hero-role-en {
+    margin-top: 5px;
+    font-size: 8px;
+    line-height: 1.45;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-meta-right {
+    top: 126px;
+    right: 22px;
+    bottom: auto;
+    width: min(58vw, 220px);
+    text-align: right;
+  }
+
+  .hero-statement {
+    font-size: 17px;
+    line-height: 1.28;
   }
 }

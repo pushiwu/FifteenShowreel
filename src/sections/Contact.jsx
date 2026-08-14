@@ -3,6 +3,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import GlareHover from "../components/GlareHover";
+import { getMotionSettings, MOTION_EASES } from "../utils/motionSystem";
 import "./Contact.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -34,9 +35,14 @@ export default function Contact() {
       const reducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
+      const compact = window.matchMedia("(max-width: 700px)").matches;
+      const settings = getMotionSettings({ compact, reducedMotion });
+      const entranceTargets = Array.from(
+        content.querySelectorAll("[data-contact-motion]"),
+      );
 
       if (reducedMotion) {
-        gsap.set([giantText, ...content.children], { clearProps: "all" });
+        gsap.set([giantText, ...entranceTargets], { clearProps: "all" });
         return;
       }
 
@@ -57,22 +63,57 @@ export default function Contact() {
         },
       );
 
-      gsap.fromTo(
-        content.children,
-        { y: 64, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "top 78%",
-            end: "top 26%",
-            scrub: 0.9,
+      const title = content.querySelector('[data-contact-motion="title"]');
+      const heading = content.querySelector('[data-contact-motion="heading"]');
+      const copy = content.querySelector('[data-contact-motion="copy"]');
+      const methods = Array.from(content.querySelectorAll('[data-contact-motion="method"]'));
+      const supporting = Array.from(content.querySelectorAll('[data-contact-motion="supporting"]'));
+      const timeline = gsap.timeline({
+        paused: true,
+        defaults: { ease: MOTION_EASES.entrance },
+        onComplete: () => gsap.set(entranceTargets, { clearProps: "willChange" }),
+        scrollTrigger: {
+          trigger: wrapper,
+          start: "top 78%",
+          once: true,
+          onEnter: () => {
+            gsap.set(entranceTargets, { willChange: "transform,opacity,clip-path,filter" });
+            timeline.play(0);
           },
         },
-      );
+      });
+
+      timeline
+        .fromTo(
+          title,
+          { autoAlpha: 0, x: -settings.travel, scaleX: 0.58, clipPath: "inset(0 100% 0 0)" },
+          { autoAlpha: 1, x: 0, scaleX: 1, clipPath: "inset(0 0% 0 0)", duration: settings.entranceDuration },
+          0,
+        )
+        .fromTo(
+          heading,
+          { autoAlpha: 0, y: settings.travel * 0.55, scaleY: 0.62, clipPath: "inset(0 0 100% 0)" },
+          { autoAlpha: 1, y: 0, scaleY: 1, clipPath: "inset(0 0 0% 0)", duration: settings.entranceDuration * 0.94 },
+          0.18,
+        )
+        .fromTo(
+          copy,
+          { autoAlpha: 0, y: settings.travel * 0.3 },
+          { autoAlpha: 1, y: 0, duration: settings.entranceDuration * 0.7 },
+          0.46,
+        )
+        .fromTo(
+          methods,
+          { autoAlpha: 0, y: settings.travel * 0.38, clipPath: "inset(100% 0 0 0)" },
+          { autoAlpha: 1, y: 0, clipPath: "inset(0% 0 0 0)", duration: settings.entranceDuration * 0.72, stagger: settings.stagger },
+          0.64,
+        )
+        .fromTo(
+          supporting,
+          { autoAlpha: 0, y: 32 },
+          { autoAlpha: 1, y: 0, duration: settings.entranceDuration * 0.62, stagger: 0.12 },
+          0.94,
+        );
 
     }, wrapper);
 
@@ -93,26 +134,26 @@ export default function Contact() {
       <footer className="contact">
         <div className="contact-grid" aria-hidden="true" />
         <div className="contact-aurora" aria-hidden="true" />
-        <div ref={giantTextRef} className="contact-giant" aria-hidden="true">
-          FIFTEEN
+        <div className="contact-giant" aria-hidden="true">
+          <span ref={giantTextRef} className="contact-giant__text">FIFTEEN</span>
         </div>
 
         <div ref={contentRef} className="contact-panel">
-          <p className="contact-label">Contact</p>
-          <h2 className="contact-title">
+          <p data-contact-motion="title" className="contact-label">Contact</p>
+          <h2 data-contact-motion="heading" className="contact-title">
             {"\u6b22\u8fce\u77ed\u7247\u3001\u5e7f\u544a\u4e0e\u4eba\u7269\u5f71\u50cf\u5408\u4f5c"}
           </h2>
-          <p className="contact-subtitle">
+          <p data-contact-motion="copy" className="contact-subtitle">
             {"\u5982\u679c\u4f60\u6b63\u5728\u5bfb\u627e\u517c\u987e\u753b\u9762\u6c14\u8d28\u4e0e\u73b0\u573a\u6267\u884c\u6548\u7387\u7684\u5408\u4f5c\u5bf9\u8c61\uff0c\u6211\u4eec\u53ef\u4ee5\u804a\u804a\u9879\u76ee\u672c\u8eab\u3002"}
           </p>
 
           <div className="contact-methods">
             {methods.map((item) => (
-              <GlareHover
+              <div data-contact-motion="method" className="contact-method-motion" key={item.label}>
+                <GlareHover
                 as="a"
                 className="contact-method"
                 href={item.href}
-                key={item.label}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noopener noreferrer" : undefined}
                 width="100%"
@@ -128,11 +169,12 @@ export default function Contact() {
               >
                 <span className="contact-method-label">{item.label}</span>
                 <span className="contact-method-value">{item.value}</span>
-              </GlareHover>
+                </GlareHover>
+              </div>
             ))}
           </div>
 
-          <div className="contact-wechat-card">
+          <div data-contact-motion="supporting" className="contact-wechat-card">
             <div className="contact-wechat-copy">
               <span className="contact-method-label">WeChat</span>
               <strong>Scan to connect</strong>
@@ -155,9 +197,9 @@ export default function Contact() {
             </a>
           </div>
 
-          <div className="contact-bottom">
+          <div data-contact-motion="supporting" className="contact-bottom">
             <p className="contact-footer">
-              Fifteen Pu Personal Portfolio | Updated August 13, 2026
+              FifteenShowreel v1.0 | Updated August 14, 2026
             </p>
             <button
               className="contact-top"

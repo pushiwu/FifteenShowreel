@@ -14,12 +14,19 @@ const Contact = lazy(() => import('./sections/Contact'));
 
 function App() {
   const [introComplete, setIntroComplete] = useState(false);
+  const [heroHandoff, setHeroHandoff] = useState(false);
   const handleIntroComplete = useCallback(() => setIntroComplete(true), []);
+  const handleHeroHandoff = useCallback(() => setHeroHandoff(true), []);
 
   return (
     <>
-      {!introComplete && <IntroOverlay onComplete={handleIntroComplete} />}
-      {introComplete ? (
+      {!introComplete && (
+        <IntroOverlay
+          onHandoffStart={handleHeroHandoff}
+          onComplete={handleIntroComplete}
+        />
+      )}
+      {heroHandoff ? (
         <div className="site-dither" aria-hidden="true">
           <div style={{ width: "1080px", height: "1080px", position: "relative" }}>
             <LiquidEther
@@ -41,7 +48,7 @@ function App() {
         <Nav />
         <main className="site-main">
           <SectionReveal immediate>
-            <Hero active={introComplete} />
+            <Hero active={heroHandoff} heroHandoff={heroHandoff} />
           </SectionReveal>
           <SectionReveal>
             <About />

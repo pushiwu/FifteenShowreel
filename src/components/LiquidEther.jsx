@@ -60,9 +60,16 @@ export default function LiquidEther({
     const mobileQuery = window.matchMedia("(max-width: 700px)");
     let reducedMotion = motionQuery.matches;
     let mobileViewport = mobileQuery.matches;
+    const lowPowerDevice =
+      (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+      navigator.connection?.saveData === true;
 
     const resize = () => {
-      const scale = clamp(resolution, 0.25, 1);
+      const scale = clamp(
+        resolution * (mobileViewport ? 0.7 : 1) * (lowPowerDevice ? 0.72 : 1),
+        0.25,
+        1,
+      );
       width = Math.max(320, Math.floor(window.innerWidth * scale));
       height = Math.max(220, Math.floor(window.innerHeight * scale));
       canvas.width = width;
@@ -165,7 +172,9 @@ export default function LiquidEther({
       animationFrame = 0;
       if (!isPageVisible || reducedMotion) return;
 
-      const fps = mobileViewport ? 18 : 30;
+      const fps = lowPowerDevice
+        ? mobileViewport ? 10 : 18
+        : mobileViewport ? 14 : 22;
       if (time - lastFrameAt < 1000 / fps) {
         schedule();
         return;

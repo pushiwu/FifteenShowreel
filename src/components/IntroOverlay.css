@@ -5,31 +5,28 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 42%, rgba(230, 230, 230, 0.08), transparent 34%),
-    linear-gradient(145deg, #101010 0%, #1a1a1a 48%, #0b0b0b 100%);
+  background: transparent;
   isolation: isolate;
 }
 
-.intro-overlay::before,
-.intro-overlay::after {
+.intro-overlay__curtain {
+  position: absolute;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 51%;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(230, 230, 230, 0.075), transparent 42%),
+    linear-gradient(145deg, #101010 0%, #191919 48%, #090909 100%);
+  will-change: transform;
+}
+
+.intro-overlay__curtain::after {
   content: "";
   position: absolute;
   inset: 0;
+  opacity: 0.16;
   pointer-events: none;
-}
-
-.intro-overlay::before {
-  z-index: -1;
-  opacity: 0.32;
-  background:
-    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.06) 50%, transparent 100%),
-    radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(0, 0, 0, 0.4) 100%);
-}
-
-.intro-overlay::after {
-  z-index: 2;
-  opacity: 0.22;
   background-image:
     radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.42) 0 1px, transparent 1.4px),
     radial-gradient(circle at 80% 64%, rgba(255, 255, 255, 0.3) 0 1px, transparent 1.3px);
@@ -37,20 +34,24 @@
   mix-blend-mode: soft-light;
 }
 
-.intro-overlay .masked-heading {
-  z-index: 1;
-  width: min(88vw, 1280px);
-  min-height: 1em;
-  color: transparent;
-  font-family: var(--font-sans);
-  text-transform: lowercase;
+.intro-overlay__curtain--top {
+  top: 0;
+  transform-origin: top;
+}
+
+.intro-overlay__curtain--bottom {
+  bottom: 0;
+  transform-origin: bottom;
 }
 
 .intro-overlay__lockup {
-  width: min(88vw, 1280px);
+  position: relative;
+  z-index: 2;
   display: grid;
   justify-items: center;
   gap: 30px;
+  width: min(88vw, 1280px);
+  will-change: transform, opacity;
 }
 
 .intro-overlay__credit {
@@ -66,17 +67,31 @@
   text-align: center;
 }
 
+.intro-overlay__credit p {
+  overflow: hidden;
+}
+
 .intro-overlay__rule {
   width: min(170px, 34vw);
   height: 1px;
-  background: rgba(242, 242, 242, 0.32);
+  background: rgba(242, 242, 242, 0.34);
+}
+
+.intro-overlay__title-shell {
+  width: 100%;
+  overflow: hidden;
+  will-change: transform, opacity, clip-path, filter;
+}
+
+.intro-overlay .masked-heading {
+  width: 100%;
+  min-height: 1em;
+  color: transparent;
+  font-family: var(--font-sans);
+  text-transform: lowercase;
 }
 
 @media (max-width: 700px) {
-  .intro-overlay .masked-heading {
-    width: min(92vw, 700px);
-  }
-
   .intro-overlay__lockup {
     width: min(92vw, 700px);
     gap: 22px;
@@ -91,7 +106,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .intro-overlay {
+  .intro-overlay__curtain {
     background: #151515;
   }
 }
