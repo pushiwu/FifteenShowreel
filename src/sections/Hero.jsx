@@ -1,37 +1,55 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import "./Hero.css";
 
 export default function Hero({ active = true, heroHandoff = false }) {
   const rootRef = useRef(null);
   const videoRef = useRef(null);
+  const isVideoInViewRef = useRef(true);
+  const [playbackBlocked, setPlaybackBlocked] = useState(false);
+
+  const syncHeroPlayback = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (!active || !isVideoInViewRef.current || document.hidden) {
+      video.pause();
+      return;
+    }
+
+    video.muted = true;
+    video.defaultMuted = true;
+    const playback = video.play();
+    if (playback) {
+      playback
+        .then(() => setPlaybackBlocked(false))
+        .catch(() => setPlaybackBlocked(true));
+    }
+  }, [active]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
 
-    let isInView = true;
-    const syncPlayback = () => {
-      if (active && isInView && !document.hidden) video.play().catch(() => {});
-      else video.pause();
-    };
     const observer = new IntersectionObserver(
       ([entry]) => {
-        isInView = entry.isIntersecting;
-        syncPlayback();
+        isVideoInViewRef.current = entry.isIntersecting;
+        syncHeroPlayback();
       },
       { threshold: 0.08 },
     );
-    const handleVisibilityChange = () => syncPlayback();
+    const handleVisibilityChange = () => syncHeroPlayback();
+    const handlePageShow = () => syncHeroPlayback();
     observer.observe(video);
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    syncPlayback();
+    window.addEventListener("pageshow", handlePageShow);
+    syncHeroPlayback();
     return () => {
       observer.disconnect();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pageshow", handlePageShow);
       video.pause();
     };
-  }, [active]);
+  }, [syncHeroPlayback]);
 
   useLayoutEffect(() => {
     const root = rootRef.current;
@@ -78,10 +96,14 @@ export default function Hero({ active = true, heroHandoff = false }) {
           data-motion="hero-media"
           className="hero-video"
           poster="/hero-showreel-poster.jpg"
+          autoPlay={active}
           muted
           loop
           playsInline
           preload={active ? "metadata" : "none"}
+          onCanPlay={syncHeroPlayback}
+          onLoadedData={syncHeroPlayback}
+          onPlaying={() => setPlaybackBlocked(false)}
           aria-hidden="true"
         >
           {active ? (
@@ -95,6 +117,17 @@ export default function Hero({ active = true, heroHandoff = false }) {
             </>
           ) : null}
         </video>
+        {active && playbackBlocked ? (
+          <button
+            type="button"
+            className="hero-video-play"
+            onClick={syncHeroPlayback}
+            aria-label="播放首页视频"
+          >
+            <span aria-hidden="true">▶</span>
+            播放
+          </button>
+        ) : null}
         <div className="hero-bg-layer" />
         <div className="hero-noise" />
         <div className="hero-light" />

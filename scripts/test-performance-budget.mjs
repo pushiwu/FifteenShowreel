@@ -69,6 +69,9 @@ test("手机端首屏完整显示 16:9 视频画幅", () => {
 
   assertAssetBudget("/projects/showreel-mobile.mp4", 3 * 1024 * 1024);
   assert.match(heroSource, /\/projects\/showreel-mobile\.mp4/);
+  assert.match(heroSource, /autoPlay=\{active\}/);
+  assert.match(heroSource, /onCanPlay=\{syncHeroPlayback\}/);
+  assert.match(heroSource, /hero-video-play/);
   assert.match(mobileRules, /\.hero-video\s*\{[\s\S]*?object-fit:\s*contain;/);
 });
 
