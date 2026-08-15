@@ -164,6 +164,10 @@ export default function LiquidEther({
     };
 
     const schedule = () => {
+      if (mobileViewport) {
+        renderStaticFrame();
+        return;
+      }
       if (animationFrame || reducedMotion || !isPageVisible) return;
       animationFrame = window.requestAnimationFrame(render);
     };
@@ -191,7 +195,7 @@ export default function LiquidEther({
 
     const handleResize = () => {
       resize();
-      if (reducedMotion) renderStaticFrame();
+      if (reducedMotion || mobileViewport) renderStaticFrame();
     };
 
     const handleVisibilityChange = () => {
@@ -202,7 +206,7 @@ export default function LiquidEther({
         return;
       }
       lastFrameAt = 0;
-      if (reducedMotion) renderStaticFrame();
+      if (reducedMotion || mobileViewport) renderStaticFrame();
       else schedule();
     };
 
@@ -220,8 +224,12 @@ export default function LiquidEther({
 
     const handleViewportChange = (event) => {
       mobileViewport = event.matches;
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
       lastFrameAt = 0;
-      schedule();
+      resize();
+      if (mobileViewport) renderStaticFrame();
+      else schedule();
     };
 
     resize();
@@ -231,7 +239,7 @@ export default function LiquidEther({
     document.addEventListener("visibilitychange", handleVisibilityChange);
     motionQuery.addEventListener?.("change", handleMotionPreference);
     mobileQuery.addEventListener?.("change", handleViewportChange);
-    if (reducedMotion) renderStaticFrame();
+    if (reducedMotion || mobileViewport) renderStaticFrame();
     else schedule();
 
     return () => {
