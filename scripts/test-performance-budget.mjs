@@ -121,6 +121,14 @@ test("人物图与所有作品卡片使用轻量网页资源", () => {
   });
 });
 
+test("About人物照片保持完整取景，不通过放大裁切", () => {
+  const aboutCss = readFileSync(path.join(root, "src/sections/About.css"), "utf8");
+
+  assert.match(aboutCss, /\.about-image\s*\{[\s\S]*?transform:\s*translate\(5%,\s*1%\);/);
+  assert.doesNotMatch(aboutCss, /\.about-image\s*\{[\s\S]*?\bscale\(/);
+  assert.doesNotMatch(aboutCss, /\.about-image\s*\{[\s\S]*?transform:[^;]*\bscale\(/);
+});
+
 test("About portrait uses cached Canvas2D rendering with a safe image fallback", () => {
   const componentSource = readFileSync(
     path.join(root, "src/components/AsciiPortrait.jsx"),
