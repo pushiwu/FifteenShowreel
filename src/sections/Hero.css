@@ -34,33 +34,6 @@
   will-change: transform, filter;
 }
 
-.hero-video-play {
-  position: absolute;
-  right: 24px;
-  bottom: 24px;
-  z-index: 5;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 10px 13px;
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  border-radius: 2px;
-  background: rgba(8, 8, 8, 0.72);
-  color: var(--text-primary);
-  backdrop-filter: blur(12px);
-  cursor: pointer;
-  font: inherit;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-}
-
-.hero-video-play:hover,
-.hero-video-play:focus-visible {
-  border-color: var(--accent);
-  color: var(--accent);
-  outline: none;
-}
-
 .hero-bg-layer {
   z-index: 1;
   background:
@@ -391,12 +364,6 @@
     object-fit: contain;
     object-position: center;
     background: #050505;
-  }
-
-  .hero-video-play {
-    right: 18px;
-    bottom: auto;
-    top: 18px;
   }
 
   .hero-meta-left {

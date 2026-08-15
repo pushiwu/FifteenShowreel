@@ -6,7 +6,12 @@ export default function Hero({ active = true, heroHandoff = false }) {
   const rootRef = useRef(null);
   const videoRef = useRef(null);
   const isVideoInViewRef = useRef(true);
-  const [playbackBlocked, setPlaybackBlocked] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    () => window.matchMedia("(max-width: 700px)").matches,
+  );
+  const heroVideoSrc = isMobileViewport
+    ? "/projects/showreel-mobile.mp4"
+    : "/projects/showreel-web.mp4";
 
   const syncHeroPlayback = useCallback(() => {
     const video = videoRef.current;
@@ -18,13 +23,20 @@ export default function Hero({ active = true, heroHandoff = false }) {
 
     video.muted = true;
     video.defaultMuted = true;
+    video.setAttribute("autoplay", "");
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
     const playback = video.play();
-    if (playback) {
-      playback
-        .then(() => setPlaybackBlocked(false))
-        .catch(() => setPlaybackBlocked(true));
-    }
+    playback?.catch(() => {});
   }, [active]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 700px)");
+    const handleChange = (event) => setIsMobileViewport(event.matches);
+    media.addEventListener?.("change", handleChange);
+    return () => media.removeEventListener?.("change", handleChange);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -39,14 +51,19 @@ export default function Hero({ active = true, heroHandoff = false }) {
     );
     const handleVisibilityChange = () => syncHeroPlayback();
     const handlePageShow = () => syncHeroPlayback();
+    const handleFirstTouch = () => syncHeroPlayback();
     observer.observe(video);
     document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("pageshow", handlePageShow);
+    window.addEventListener("touchstart", handleFirstTouch, { passive: true });
+    window.addEventListener("pointerdown", handleFirstTouch, { passive: true });
     syncHeroPlayback();
     return () => {
       observer.disconnect();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("pageshow", handlePageShow);
+      window.removeEventListener("touchstart", handleFirstTouch);
+      window.removeEventListener("pointerdown", handleFirstTouch);
       video.pause();
     };
   }, [syncHeroPlayback]);
@@ -95,39 +112,18 @@ export default function Hero({ active = true, heroHandoff = false }) {
           ref={videoRef}
           data-motion="hero-media"
           className="hero-video"
+          src={active ? heroVideoSrc : undefined}
           poster="/hero-showreel-poster.jpg"
           autoPlay={active}
           muted
           loop
           playsInline
-          preload={active ? "metadata" : "none"}
+          preload={active ? "auto" : "none"}
+          onLoadedMetadata={syncHeroPlayback}
           onCanPlay={syncHeroPlayback}
           onLoadedData={syncHeroPlayback}
-          onPlaying={() => setPlaybackBlocked(false)}
           aria-hidden="true"
-        >
-          {active ? (
-            <>
-              <source
-                src="/projects/showreel-mobile.mp4"
-                media="(max-width: 700px)"
-                type="video/mp4"
-              />
-              <source src="/projects/showreel-web.mp4" type="video/mp4" />
-            </>
-          ) : null}
-        </video>
-        {active && playbackBlocked ? (
-          <button
-            type="button"
-            className="hero-video-play"
-            onClick={syncHeroPlayback}
-            aria-label="播放首页视频"
-          >
-            <span aria-hidden="true">▶</span>
-            播放
-          </button>
-        ) : null}
+        />
         <div className="hero-bg-layer" />
         <div className="hero-noise" />
         <div className="hero-light" />
