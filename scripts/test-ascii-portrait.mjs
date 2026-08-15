@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import * as asciiPortraitConfig from "../src/utils/asciiPortrait.js";
+
 import {
   CUSTOM_ASCII_DEFAULTS,
   RENDER_MODES,
@@ -66,6 +68,18 @@ test("custom ASCII defaults preserve the supplied braille recipe", () => {
   assert.equal(CUSTOM_ASCII_DEFAULTS.animSpeed.intensity, 163);
   assert.equal(CUSTOM_ASCII_DEFAULTS.animIntensity.intensity, 77);
   assert.deepEqual(RENDER_MODES, expectedModes);
+});
+
+test("About portrait keeps the photo primary and the animated dots restrained", () => {
+  const config = asciiPortraitConfig.ABOUT_PORTRAIT_CONFIG;
+
+  assert.ok(config, "About should declare a dedicated portrait recipe");
+  assert.equal(config.bgMode, "none");
+  assert.equal(config.bgOpacity, 0);
+  assert.ok(config.coverage <= 24);
+  assert.ok(config.pfx.filmGrain.intensity <= 12);
+  assert.ok(config.pfx.glitch.intensity <= 6);
+  assert.ok(config.animIntensity.intensity <= 24);
 });
 
 test("config normalization clamps unsafe values and rejects unknown modes", () => {
