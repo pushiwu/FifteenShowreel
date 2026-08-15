@@ -238,6 +238,17 @@ export default function Projects() {
     }
   }, [videoSegmentIndex]);
 
+  useEffect(() => {
+    const video = modalVideoRef.current;
+    if (!video) return undefined;
+
+    return () => {
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    };
+  }, [openedProjectId, videoSegmentIndex]);
+
   useEffect(
     () => () => {
       if (mouseGestureTimerRef.current !== null) {

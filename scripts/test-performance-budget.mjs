@@ -63,10 +63,28 @@ test("首屏使用为网页交付压缩的 showreel", () => {
 });
 
 test("手机端首屏完整显示 16:9 视频画幅", () => {
+  const heroSource = readFileSync(path.join(root, "src/sections/Hero.jsx"), "utf8");
   const heroCss = readFileSync(path.join(root, "src/sections/Hero.css"), "utf8");
   const mobileRules = heroCss.match(/@media \(max-width: 700px\) \{[\s\S]*\}\s*$/)?.[0] ?? "";
 
+  assertAssetBudget("/projects/showreel-mobile.mp4", 3 * 1024 * 1024);
+  assert.match(heroSource, /\/projects\/showreel-mobile\.mp4/);
   assert.match(mobileRules, /\.hero-video\s*\{[\s\S]*?object-fit:\s*contain;/);
+});
+
+test("移动端持续动效和项目视频会释放 Safari 资源", () => {
+  const liquidSource = readFileSync(
+    path.join(root, "src/components/LiquidEther.jsx"),
+    "utf8",
+  );
+  const projectsSource = readFileSync(
+    path.join(root, "src/sections/Projects.jsx"),
+    "utf8",
+  );
+
+  assert.match(liquidSource, /if \(mobileViewport\) \{\s*renderStaticFrame\(\);\s*return;/);
+  assert.match(projectsSource, /video\.removeAttribute\("src"\)/);
+  assert.match(projectsSource, /video\.load\(\)/);
 });
 
 test("履历使用正确的金鹄青年电影节名称", () => {
