@@ -87,6 +87,25 @@ test("移动端持续动效和项目视频会释放 Safari 资源", () => {
   assert.match(projectsSource, /video\.load\(\)/);
 });
 
+test("项目视频支持 R2 HLS 并保留 MP4 回退", () => {
+  const projectsSource = readFileSync(
+    path.join(root, "src/sections/Projects.jsx"),
+    "utf8",
+  );
+  const deliverySource = readFileSync(
+    path.join(root, "src/utils/videoDelivery.js"),
+    "utf8",
+  );
+
+  assert.match(projectsSource, /getHlsUrl/);
+  assert.match(projectsSource, /supportsNativeHls/);
+  assert.match(projectsSource, /import\("hls\.js"\)/);
+  assert.match(projectsSource, /hls\?\.destroy\(\)/);
+  assert.match(projectsSource, /src=\{openedHlsUrl \? undefined : openedVideoSegments/);
+  assert.match(deliverySource, /VITE_VIDEO_CDN_BASE_URL/);
+  assert.match(deliverySource, /master\.m3u8/);
+});
+
 test("履历使用正确的金鹄青年电影节名称", () => {
   const resumeSource = readFileSync(path.join(root, "src/sections/Resume.jsx"), "utf8");
 

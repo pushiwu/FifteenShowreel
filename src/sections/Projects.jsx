@@ -28,6 +28,10 @@ import {
   getSafeActiveIndex,
 } from "../utils/orbitLayout";
 import { shouldRunProjectAutoplay } from "../utils/animationPolicy";
+import {
+  getHlsUrl,
+  supportsNativeHls,
+} from "../utils/videoDelivery";
 import "./Projects.css";
 
 const AUTOPLAY_DELAY = 4200;
@@ -119,6 +123,7 @@ export default function Projects() {
   const projectsCurveRef = useRef(null);
   const projectsSectionRef = useRef(null);
   const modalVideoRef = useRef(null);
+  const hlsRef = useRef(null);
 
   const visibleProjects = useMemo(() => {
     if (viewMode === "all") {
@@ -136,6 +141,12 @@ export default function Projects() {
     activeIndex,
     visibleProjects.length,
   );
+  const openedProject = useMemo(
+    () => projects.find((project) => project.id === openedProjectId) ?? null,
+    [openedProjectId],
+  );
+  const openedVideoSegments = openedProject?.videoSegments ??
+    (openedProject?.video ? [openedProject.video] : []);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -238,6 +249,53 @@ export default function Projects() {
     }
   }, [videoSegmentIndex]);
 
+  const openedHlsUrl = getHlsUrl(openedProject?.videoSegments?.[0] ?? openedProject?.video ?? "");
+
+  useEffect(() => {
+    const video = modalVideoRef.current;
+    if (!video || !openedHlsUrl) return undefined;
+
+    let cancelled = false;
+    let hls;
+    const attachHls = async () => {
+      if (supportsNativeHls(video)) {
+        video.src = openedHlsUrl;
+        video.load();
+        video.play().catch(() => {});
+        return;
+      }
+
+      try {
+        const module = await import("hls.js");
+        const Hls = module.default;
+        if (cancelled || !Hls.isSupported()) return;
+        hls = new Hls({
+          enableWorker: true,
+          backBufferLength: 30,
+          maxBufferLength: 30,
+        });
+        hlsRef.current = hls;
+        hls.loadSource(openedHlsUrl);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          if (!cancelled) video.play().catch(() => {});
+        });
+      } catch {
+        // MP4 remains the rendered fallback when HLS is unavailable.
+      }
+    };
+
+    attachHls();
+    return () => {
+      cancelled = true;
+      hls?.destroy();
+      if (hlsRef.current === hls) hlsRef.current = null;
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    };
+  }, [openedHlsUrl, openedProjectId]);
+
   useEffect(() => {
     const video = modalVideoRef.current;
     if (!video) return undefined;
@@ -265,13 +323,6 @@ export default function Projects() {
     () => visibleProjects[safeActiveIndex] ?? visibleProjects[0] ?? projects[0],
     [safeActiveIndex, visibleProjects]
   );
-
-  const openedProject = useMemo(
-    () => projects.find((project) => project.id === openedProjectId) ?? null,
-    [openedProjectId]
-  );
-  const openedVideoSegments = openedProject?.videoSegments ??
-    (openedProject?.video ? [openedProject.video] : []);
 
   const handleProjectClick = (project, index) => {
     setActiveIndex(index);
@@ -700,15 +751,16 @@ export default function Projects() {
                   ) : openedVideoSegments.length ? (
                     <video
                       ref={modalVideoRef}
-                      key={`${openedProject.id}-${videoSegmentIndex}`}
+                      key={`${openedProject.id}-${openedHlsUrl || videoSegmentIndex}`}
                       className="projects-modal-video"
-                      src={openedVideoSegments[videoSegmentIndex]}
+                      src={openedHlsUrl ? undefined : openedVideoSegments[videoSegmentIndex]}
                       poster={openedProject.poster ?? openedProject.image}
                       controls
                       autoPlay
                       playsInline
                       preload="metadata"
                       onEnded={() => {
+                        if (openedHlsUrl) return;
                         if (videoSegmentIndex < openedVideoSegments.length - 1) {
                           setVideoSegmentIndex((current) => current + 1);
                         }

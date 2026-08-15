@@ -24,6 +24,24 @@ npm.cmd run build
 
 `test:assets` 会递归检查 `public/`，并阻止任何超过 Cloudflare Pages `25 MiB` 单文件上限的资源进入发布版本。
 
+## 可选的 R2 + HLS 视频分发
+
+网站默认继续使用现有 MP4；配置 `VITE_VIDEO_CDN_BASE_URL` 后，项目播放页会优先请求 R2 上的 HLS 播放清单，Safari 使用原生 HLS，其他浏览器按需加载 `hls.js`，不可用时自动回退 MP4。
+
+```powershell
+.\scripts\generate-hls.ps1 -ProjectSlug nian-nian
+.\scripts\upload-hls-to-r2.ps1 -Bucket fifteen-showreel-video -InputRoot .\dist-hls -Prefix hls
+```
+
+R2 公开域名应允许网站来源执行 `GET` 和 `HEAD`，并为 `.m3u8` 设置 `application/vnd.apple.mpegurl`、为 `.m4s` 设置 `video/iso.segment`。构建 Pages 时设置：
+
+```powershell
+$env:VITE_VIDEO_CDN_BASE_URL = "https://media.example.com"
+npm.cmd run build
+```
+
+未设置该环境变量时，页面不会请求 R2，也不会改变现有 MP4 播放行为。
+
 ## Cloudflare Pages
 
 - Framework preset: `Vite`

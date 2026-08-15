@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:assets": "node scripts/check-project-assets.mjs",
+    "test:video-delivery": "node --test scripts/test-video-delivery.mjs",
     "test:interaction": "node --test scripts/test-mouse-direction.mjs scripts/test-wheel-direction.mjs",
     "test:data": "node --test scripts/test-project-data.mjs",
     "test:orbit": "node --test scripts/test-orbit-layout.mjs",
@@ -15,6 +16,7 @@
   },
   "dependencies": {
     "gsap": "^3.15.0",
+    "hls.js": "^1.6.0",
     "motion": "^12.43.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
