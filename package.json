@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test:assets": "node scripts/check-project-assets.mjs",
     "test:video-delivery": "node --test scripts/test-video-delivery.mjs",
+    "test:dit-workflow": "node --test scripts/test-dit-workflow.mjs",
     "test:interaction": "node --test scripts/test-mouse-direction.mjs scripts/test-wheel-direction.mjs",
     "test:data": "node --test scripts/test-project-data.mjs",
     "test:orbit": "node --test scripts/test-orbit-layout.mjs",
