@@ -113,6 +113,25 @@ export const CUSTOM_ASCII_DEFAULTS = {
   },
 };
 
+export const ABOUT_PORTRAIT_CONFIG = {
+  ...CUSTOM_ASCII_DEFAULTS,
+  bgMode: "none",
+  bgBlur: 0,
+  bgOpacity: 0,
+  coverage: 22,
+  brightness: 96,
+  contrast: 108,
+  edgeEmphasis: 64,
+  density: 12,
+  pfx: {
+    ...CUSTOM_ASCII_DEFAULTS.pfx,
+    vignette: { enabled: true, intensity: 12 },
+    filmGrain: { enabled: true, intensity: 10 },
+    glitch: { enabled: true, intensity: 4 },
+  },
+  animIntensity: { enabled: true, intensity: 20 },
+};
+
 const ANIMATION_STYLES = new Set(["wave", "pulse", "shimmer", "ripple", "flicker"]);
 
 function normalizeEffect(effect, fallback) {

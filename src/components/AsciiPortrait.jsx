@@ -15,6 +15,8 @@ export default function AsciiPortrait({
   className = "",
   imageClassName = "",
   config = CUSTOM_ASCII_DEFAULTS,
+  imageOpacity = 0,
+  canvasOpacity = 1,
 }) {
   const wrapperRef = useRef(null);
   const canvasRef = useRef(null);
@@ -190,6 +192,10 @@ export default function AsciiPortrait({
     <div
       ref={wrapperRef}
       className={`ascii-portrait ${ready ? "is-ready" : ""} ${className}`.trim()}
+      style={{
+        "--ascii-image-ready-opacity": imageOpacity,
+        "--ascii-canvas-ready-opacity": canvasOpacity,
+      }}
     >
       <img
         className={`ascii-portrait__image ${imageClassName}`.trim()}

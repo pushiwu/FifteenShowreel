@@ -103,11 +103,11 @@
 .about-image-fallback {
   object-fit: contain;
   object-position: center;
-  filter: saturate(0.92) contrast(1.04);
+  filter: grayscale(1) brightness(1.18) contrast(1.08);
 }
 
 .about-image .ascii-portrait__canvas {
-  filter: brightness(1.52) contrast(1.03);
+  filter: brightness(1.08) contrast(1.04);
 }
 
 .about-visual-caption {
