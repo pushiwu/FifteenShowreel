@@ -30,7 +30,7 @@ test("行和页滚动单位会转换为像素量级", () => {
   assert.equal(normalizeWheelDelta(1, 2, 900), 900);
 });
 
-test("环形卡片只捕获横向主导的滚轮输入", () => {
+test("环形卡片同时捕获鼠标纵向滚轮和触控板横向输入", () => {
   assert.equal(
     shouldCaptureProjectWheel({
       itemCount: 4,
@@ -49,7 +49,7 @@ test("环形卡片只捕获横向主导的滚轮输入", () => {
       deltaX: 12,
       deltaY: 80,
     }),
-    false,
+    true,
   );
 });
 
