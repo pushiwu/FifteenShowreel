@@ -8,17 +8,15 @@ export function shouldCaptureProjectWheel({
   deltaX = 0,
   deltaY = 0,
 }) {
-  const isHorizontalGesture =
-    Number.isFinite(deltaX) &&
-    Number.isFinite(deltaY) &&
-    Math.abs(deltaX) > Math.abs(deltaY);
+  const dominantDelta =
+    Math.abs(deltaY) >= Math.abs(deltaX) ? deltaY : deltaX;
 
   return (
     itemCount > 1 &&
     !isModalOpen &&
     !isGridLayout &&
-    isHorizontalGesture &&
-    deltaX !== 0
+    Number.isFinite(dominantDelta) &&
+    dominantDelta !== 0
   );
 }
 
