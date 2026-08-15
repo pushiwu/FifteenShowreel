@@ -447,6 +447,17 @@ const projectRecords = [
     videoSegments: getVideoSegments("chasing-light", 3),
   },
   {
+    id: 33,
+    layer: "archive",
+    textOnly: true,
+    title: "信",
+    titleEn: "Letter",
+    role: "灯光助理",
+    roleEn: "Lighting Assistant",
+    institution: "伦敦艺术学院",
+    institutionEn: "London College of Arts",
+  },
+  {
     id: 16,
     layer: "archive",
     title: "\u571f\u5730\u55f2\u55f2\uff0c\u5929\u4e0a\u8981\u600e\u4e48\u8d70",

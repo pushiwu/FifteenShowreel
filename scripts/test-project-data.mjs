@@ -14,7 +14,6 @@ test("requested projects keep their intended categories", () => {
   assert.equal(projectByTitle("远山不扰")?.role, "制片 / 数字影像工程师");
   assert.equal(projectByTitle("远山不扰")?.roleEn, "Producer / Digital Imaging Technician");
 });
-
 test("已确认的画廊项目拥有完整双语资料和可访问素材", () => {
   const expected = [
     ["问迹", 12],
@@ -40,7 +39,6 @@ test("已确认的画廊项目拥有完整双语资料和可访问素材", () =>
     }
   }
 });
-
 test("文字资料项目不伪造媒体资源并仍可被全部项目展示", () => {
   const textOnlyTitles = [
     "异日伙伴",
@@ -48,6 +46,7 @@ test("文字资料项目不伪造媒体资源并仍可被全部项目展示", ()
     "湖南省益阳市南县检察院MV",
     "湖南省怀化市麻阳县2025文旅宣传片",
     "蜘蛛之丝",
+    "信",
   ];
 
   for (const title of textOnlyTitles) {
@@ -59,9 +58,18 @@ test("文字资料项目不伪造媒体资源并仍可被全部项目展示", ()
     assert.equal(project.galleryImages, undefined, `Unexpected gallery for text-only project: ${title}`);
   }
 
+  const letter = projectByTitle("信");
+  assert.equal(letter.titleEn, "Letter");
+  assert.equal(letter.role, "灯光助理");
+  assert.equal(letter.roleEn, "Lighting Assistant");
+  assert.equal(letter.institution, "伦敦艺术学院");
+  assert.equal(letter.institutionEn, "London College of Arts");
+  assert.equal(letter.format, undefined);
+  assert.equal(letter.formatEn, undefined);
+
   assert.deepEqual(
     projects.filter((project) => project.textOnly).map((project) => project.id),
-    [23, 24, 25, 26, 27]
+    [23, 24, 25, 26, 27, 33]
   );
 });
 
@@ -154,3 +162,4 @@ test("创作阐述保持中英成对，媒体状态不冒充作品类型", () =>
     }
   }
 });
+

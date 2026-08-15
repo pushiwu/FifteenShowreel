@@ -755,12 +755,14 @@ export default function Projects() {
                       <br />
                       {openedProject.institutionEn}
                     </p>
-                    <p>
-                      <span>Format / {"\u7c7b\u578b"}</span>
-                      {openedProject.format}
-                      <br />
-                      {openedProject.formatEn}
-                    </p>
+                    {openedProject.format || openedProject.formatEn ? (
+                      <p>
+                        <span>Format / {"\u7c7b\u578b"}</span>
+                        {openedProject.format}
+                        <br />
+                        {openedProject.formatEn}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               </div>
