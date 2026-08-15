@@ -13,6 +13,8 @@ test("requested projects keep their intended categories", () => {
   assert.equal(projectById(9)?.layer, "extended");
   assert.equal(projectByTitle("远山不扰")?.role, "制片 / 数字影像工程师");
   assert.equal(projectByTitle("远山不扰")?.roleEn, "Producer / Digital Imaging Technician");
+  assert.equal(projectByTitle("远山不扰")?.institution, "湖南城市学院");
+  assert.equal(projectByTitle("远山不扰")?.institutionEn, "Hunan City University");
 });
 test("已确认的画廊项目拥有完整双语资料和可访问素材", () => {
   const expected = [
