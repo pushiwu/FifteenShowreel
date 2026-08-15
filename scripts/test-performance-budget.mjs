@@ -62,6 +62,33 @@ test("首屏使用为网页交付压缩的 showreel", () => {
   );
 });
 
+test("手机端首屏完整显示 16:9 视频画幅", () => {
+  const heroCss = readFileSync(path.join(root, "src/sections/Hero.css"), "utf8");
+  const mobileRules = heroCss.match(/@media \(max-width: 700px\) \{[\s\S]*\}\s*$/)?.[0] ?? "";
+
+  assert.match(mobileRules, /\.hero-video\s*\{[\s\S]*?object-fit:\s*contain;/);
+});
+
+test("履历使用正确的金鹄青年电影节名称", () => {
+  const resumeSource = readFileSync(path.join(root, "src/sections/Resume.jsx"), "utf8");
+
+  assert.match(resumeSource, /入围金鹄青年电影节/);
+  assert.doesNotMatch(resumeSource, /金鹅青年电影节/);
+});
+
+test("微信域名验证文件从网站根路径发布", () => {
+  const verificationPath = path.join(
+    publicRoot,
+    "14caac6752b3994cd1226e45ec0d6e62.txt",
+  );
+
+  assert.equal(existsSync(verificationPath), true);
+  assert.equal(
+    readFileSync(verificationPath, "utf8").trim(),
+    "9292437282d37f658ad600b0b6b299225b888d19",
+  );
+});
+
 test("人物图与所有作品卡片使用轻量网页资源", () => {
   const aboutSource = readFileSync(path.join(root, "src/sections/About.jsx"), "utf8");
   assert.match(aboutSource, /\/about-profile-cutout\.webp/);

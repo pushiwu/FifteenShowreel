@@ -361,7 +361,9 @@
   }
 
   .hero-video {
+    object-fit: contain;
     object-position: center;
+    background: #050505;
   }
 
   .hero-meta-left {

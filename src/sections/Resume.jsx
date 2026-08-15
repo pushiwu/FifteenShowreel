@@ -10,7 +10,7 @@ const awards = [
   ["入围罗德岛国际电影节半决赛", "Semi-finalist, Rhode Island International Film Festival"],
   ["入围多伦多国际诺莱坞电影节", "Official Selection, Toronto International Nollywood Film Festival"],
   ["入围亚洲国际青年电影节", "Official Selection, Asian International Youth Film Festival"],
-  ["入围金鹅青年电影节", "Official Selection, Jinhu Youth Film Festival"],
+  ["入围金鹄青年电影节", "Official Selection, Jinhu Youth Film Festival"],
   ["入围极光之夜大学生微电影节", "Official Selection, Aurora Night Student Micro-film Carnival"],
 ].map(([zh, en]) => ({ zh, en }));
 
