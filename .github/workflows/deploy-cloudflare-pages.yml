@@ -1,0 +1,116 @@
+name: Deploy Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: fifteenshowreel-production
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  test-build-deploy:
+    name: Test, build, and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out repository and Git LFS media
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          lfs: true
+
+      - name: Restore Git LFS working files
+        shell: bash
+        run: |
+          git lfs pull
+          git lfs checkout
+          git lfs fsck
+
+      - name: Reject unresolved Git LFS pointers
+        shell: bash
+        run: |
+          unresolved=0
+          while IFS= read -r file; do
+            if [ -f "$file" ] && grep -q '^version https://git-lfs.github.com/spec/v1$' "$file"; then
+              echo "Unresolved Git LFS pointer: $file"
+              unresolved=1
+            fi
+          done < <(git lfs ls-files --name-only)
+          exit "$unresolved"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate project data
+        run: npm run test:data
+
+      - name: Validate project assets
+        run: npm run test:assets
+
+      - name: Validate interactions
+        run: npm run test:interaction
+
+      - name: Validate orbit layout
+        run: npm run test:orbit
+
+      - name: Validate animation performance
+        run: npm run test:performance
+
+      - name: Validate video delivery
+        run: npm run test:video-delivery
+
+      - name: Validate DIT workflow
+        run: npm run test:dit-workflow
+
+      - name: Build production website
+        run: npm run build
+
+      - name: Reject unresolved pointers in production output
+        shell: bash
+        run: |
+          unresolved=0
+          while IFS= read -r file; do
+            case "$file" in
+              public/*)
+                built_file="dist/${file#public/}"
+                if [ -f "$built_file" ] && grep -q '^version https://git-lfs.github.com/spec/v1$' "$built_file"; then
+                  echo "Unresolved Git LFS pointer in production output: $built_file"
+                  unresolved=1
+                fi
+                ;;
+            esac
+          done < <(git lfs ls-files --name-only)
+          exit "$unresolved"
+
+      - name: Check Cloudflare deployment credentials
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Cloudflare deployment secrets are not configured."
+            exit 1
+          fi
+
+      - name: Deploy production to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=fifteenshowreel --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
