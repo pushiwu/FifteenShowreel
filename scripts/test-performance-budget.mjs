@@ -123,13 +123,30 @@ test("About portrait uses cached Canvas2D rendering with a safe image fallback",
 
 test("About integrates the ASCII portrait without replacing its accessible fallback", () => {
   const aboutSource = readFileSync(path.join(root, "src/sections/About.jsx"), "utf8");
+  const componentSource = readFileSync(
+    path.join(root, "src/components/AsciiPortrait.jsx"),
+    "utf8",
+  );
+  const componentCss = readFileSync(
+    path.join(root, "src/components/AsciiPortrait.css"),
+    "utf8",
+  );
 
   assert.match(
     aboutSource,
     /import AsciiPortrait from "\.\.\/components\/AsciiPortrait"/,
   );
   assert.match(aboutSource, /<AsciiPortrait/);
+  assert.match(aboutSource, /ABOUT_PORTRAIT_CONFIG/);
+  assert.match(aboutSource, /imageOpacity=\{0\.82\}/);
+  assert.match(aboutSource, /canvasOpacity=\{0\.22\}/);
   assert.doesNotMatch(aboutSource, /<img[\s\S]*className="about-image"/);
+  assert.match(componentSource, /imageOpacity = 0/);
+  assert.match(componentSource, /canvasOpacity = 1/);
+  assert.match(componentSource, /--ascii-image-ready-opacity/);
+  assert.match(componentSource, /--ascii-canvas-ready-opacity/);
+  assert.match(componentCss, /var\(--ascii-image-ready-opacity, 0\)/);
+  assert.match(componentCss, /var\(--ascii-canvas-ready-opacity, 1\)/);
 });
 
 test("诗项目画廊不再直接加载 25 MB 原始 PNG", () => {

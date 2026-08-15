@@ -2,6 +2,7 @@ import "./About.css";
 import AsciiPortrait from "../components/AsciiPortrait";
 import GlareHover from "../components/GlareHover";
 import SectionMotion from "../components/SectionMotion";
+import { ABOUT_PORTRAIT_CONFIG } from "../utils/asciiPortrait";
 
 const overviewLinks = [
   { href: "#projects", number: "03", zh: "核心作品", en: "Selected Works" },
@@ -71,7 +72,15 @@ export default function About() {
             <div className="about-media-parallax">
               <div className="about-visual">
                 <span className="about-visual-glow" aria-hidden="true" />
-                <AsciiPortrait className="about-image" imageClassName="about-image-fallback" src="/about-profile-cutout.webp" alt="蒲师武" />
+                <AsciiPortrait
+                  className="about-image"
+                  imageClassName="about-image-fallback"
+                  src="/about-profile-cutout.webp"
+                  alt="蒲师武"
+                  config={ABOUT_PORTRAIT_CONFIG}
+                  imageOpacity={0.82}
+                  canvasOpacity={0.22}
+                />
                 <span data-motion="meta" className="about-visual-caption">
                   Cinematographer / Gaffer / Camera Operator / 1st AC / DIT
                 </span>
