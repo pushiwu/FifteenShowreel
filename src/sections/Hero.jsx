@@ -73,17 +73,28 @@ export default function Hero({ active = true, heroHandoff = false }) {
     <section ref={rootRef} className={`hero ${heroHandoff ? "is-handoff" : "is-waiting"}`} id="home">
       <div className="hero-shell">
         <video
+          key={active ? "hero-active" : "hero-idle"}
           ref={videoRef}
           data-motion="hero-media"
           className="hero-video"
-          src={active ? "/projects/showreel-web.mp4" : undefined}
           poster="/hero-showreel-poster.jpg"
           muted
           loop
           playsInline
           preload={active ? "metadata" : "none"}
           aria-hidden="true"
-        />
+        >
+          {active ? (
+            <>
+              <source
+                src="/projects/showreel-mobile.mp4"
+                media="(max-width: 700px)"
+                type="video/mp4"
+              />
+              <source src="/projects/showreel-web.mp4" type="video/mp4" />
+            </>
+          ) : null}
+        </video>
         <div className="hero-bg-layer" />
         <div className="hero-noise" />
         <div className="hero-light" />
