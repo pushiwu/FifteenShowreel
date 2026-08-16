@@ -120,16 +120,23 @@ test("履历使用正确的金鹄青年电影节名称", () => {
 });
 
 test("微信域名验证文件从网站根路径发布", () => {
-  const verificationPath = path.join(
-    publicRoot,
-    "14caac6752b3994cd1226e45ec0d6e62.txt",
-  );
+  const verificationFiles = new Map([
+    [
+      "14caac6752b3994cd1226e45ec0d6e62.txt",
+      "9292437282d37f658ad600b0b6b299225b888d19",
+    ],
+    [
+      "3c5ca4c58b0d07397b45c4b2c1a1e7c7.txt",
+      "b23c3ea76cfd14606eaa83d9914b4d0f5fe88857",
+    ],
+  ]);
 
-  assert.equal(existsSync(verificationPath), true);
-  assert.equal(
-    readFileSync(verificationPath, "utf8").trim(),
-    "9292437282d37f658ad600b0b6b299225b888d19",
-  );
+  for (const [fileName, expectedContent] of verificationFiles) {
+    const verificationPath = path.join(publicRoot, fileName);
+
+    assert.equal(existsSync(verificationPath), true, `${fileName} must exist`);
+    assert.equal(readFileSync(verificationPath, "utf8").trim(), expectedContent);
+  }
 });
 
 test("人物图与所有作品卡片使用轻量网页资源", () => {
