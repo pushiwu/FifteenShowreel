@@ -99,6 +99,42 @@ def main() -> None:
     body_envelope = np.clip((half_width[:, None] + feather - distance) / feather, 0.0, 1.0)
     body_envelope = body_envelope * body_envelope * (3.0 - 2.0 * body_envelope)
     alpha *= body_envelope
+
+    # The source contains a broad low-saturation shape behind the head. Keep the
+    # hair silhouette, but reject that connected background before the envelope
+    # opens out toward the shoulders.
+    head_half_width = np.interp(
+        normalized_y,
+        [0.0, 0.06, 0.075, 0.09, 0.12, 0.16, 0.22, 1.0],
+        [0.015, 0.035, 0.06, 0.078, 0.105, 0.13, 0.18, 0.18],
+    )
+    head_feather = np.interp(
+        normalized_y,
+        [0.0, 0.06, 0.09, 0.12, 0.16, 0.22, 1.0],
+        [0.006, 0.008, 0.016, 0.022, 0.03, 0.045, 0.045],
+    )
+    head_envelope = np.clip(
+        (head_half_width[:, None] + head_feather[:, None] - distance)
+        / head_feather[:, None],
+        0.0,
+        1.0,
+    )
+    head_envelope = head_envelope * head_envelope * (3.0 - 2.0 * head_envelope)
+    head_guard = np.ones_like(alpha, dtype=np.float32)
+    head_rows = normalized_y <= 0.22
+    head_guard[head_rows] = head_envelope[head_rows]
+
+    hair_start = 0.06
+    hair_full = 0.073
+    top_reveal = np.clip(
+        (normalized_y - hair_start) / (hair_full - hair_start),
+        0.0,
+        1.0,
+    )
+    top_reveal = top_reveal * top_reveal * (3.0 - 2.0 * top_reveal)
+    head_guard[head_rows] *= top_reveal[head_rows, None]
+    alpha *= head_guard
+
     vertical_fade = np.ones(mask_height, dtype=np.float32)
     fade_start = int(mask_height * 0.82)
     fade_end = int(mask_height * 0.985)
