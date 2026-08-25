@@ -9,7 +9,6 @@ import "./Contact.css";
 gsap.registerPlugin(ScrollTrigger);
 
 const methods = [
-  { label: "\u7535\u8bdd", value: "15886690296", href: "tel:15886690296" },
   { label: "\u90ae\u7bb1", value: "2493627661@qq.com", href: "mailto:2493627661@qq.com" },
   { label: "\u5fae\u4fe1", value: "17674570906", href: "#" },
   {

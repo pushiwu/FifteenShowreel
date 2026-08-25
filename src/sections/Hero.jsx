@@ -141,8 +141,8 @@ export default function Hero({ active = true, heroHandoff = false }) {
             <p data-motion="hero-english" className="hero-name-en">fifteen</p>
           </div>
           <div data-motion="hero-support" className="hero-role-block">
-            <p className="hero-role-zh">摄影、灯光、掌机、第一摄影助理、数字影像工程师</p>
-            <p className="hero-role-en">Cinematographer / Gaffer / Camera Operator / 1st AC / DIT</p>
+            <p className="hero-role-zh">摄影指导 / Cinematographer</p>
+            <p className="hero-role-detail">同时具备灯光、掌机、第一摄影助理、数字影像工程师（DIT）完整现场工作能力。</p>
           </div>
         </div>
 
