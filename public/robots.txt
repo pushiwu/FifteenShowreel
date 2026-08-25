@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fifteenshowreel.pages.dev/sitemap.xml

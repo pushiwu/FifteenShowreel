@@ -119,6 +119,34 @@ test("履历使用正确的金鹄青年电影节名称", () => {
   assert.doesNotMatch(resumeSource, /金鹅青年电影节/);
 });
 
+test("奖项按含金量排序并使用核验后的英文名称", () => {
+  const resumeSource = readFileSync(path.join(root, "src/sections/Resume.jsx"), "utf8");
+  const expectedOrder = [
+    "入围罗德岛国际电影节半决赛",
+    "入围多伦多国际诺莱坞电影节",
+    "第十七届全国大学生广告艺术大赛视频类微电影广告湖南省一等奖",
+    "入围亚洲国际青年电影节",
+    "第十五届粤光杯学生影视作品大赛最佳剧情片、最佳声音艺术奖",
+    "第十一届湖南省大学生公益广告大赛二等奖",
+    "第十届湖南省大学生公益广告大赛二等奖",
+    "入围金鹄青年电影节",
+    "入围“极光之夜”大学生微电影嘉年华",
+    "第十八届全国大学生广告艺术大赛视频类微电影广告湖南省三等奖",
+  ];
+
+  let previousIndex = -1;
+  for (const award of expectedOrder) {
+    const currentIndex = resumeSource.indexOf(award);
+    assert.ok(currentIndex > previousIndex, `${award} must follow the prestige order`);
+    previousIndex = currentIndex;
+  }
+
+  assert.match(resumeSource, /Semi-Finalist, Flickers' Rhode Island International Film Festival/);
+  assert.match(resumeSource, /Official Selection, Asia International Youth Film Festival/);
+  assert.match(resumeSource, /National Advertising Art Design Competition for College Students/);
+  assert.doesNotMatch(resumeSource, /Asian International Youth Film Festival/);
+});
+
 test("微信域名验证文件从网站根路径发布", () => {
   const verificationFiles = new Map([
     [
@@ -137,6 +165,22 @@ test("微信域名验证文件从网站根路径发布", () => {
     assert.equal(existsSync(verificationPath), true, `${fileName} must exist`);
     assert.equal(readFileSync(verificationPath, "utf8").trim(), expectedContent);
   }
+});
+
+test("站点提供可核验的公开身份与抓取元信息", () => {
+  const indexSource = readFileSync(path.join(root, "index.html"), "utf8");
+  const robotsSource = readFileSync(path.join(publicRoot, "robots.txt"), "utf8");
+  const sitemapSource = readFileSync(path.join(publicRoot, "sitemap.xml"), "utf8");
+  const manifestSource = readFileSync(path.join(publicRoot, "site.webmanifest"), "utf8");
+
+  assert.match(indexSource, /rel="canonical" href="https:\/\/fifteenshowreel\.pages\.dev\/"/);
+  assert.match(indexSource, /property="og:url" content="https:\/\/fifteenshowreel\.pages\.dev\/"/);
+  assert.match(indexSource, /property="og:type" content="website"/);
+  assert.match(indexSource, /property="og:image" content="https:\/\/fifteenshowreel\.pages\.dev\/hero-showreel-poster\.jpg"/);
+  assert.match(indexSource, /rel="manifest" href="\/site\.webmanifest"/);
+  assert.match(robotsSource, /Sitemap: https:\/\/fifteenshowreel\.pages\.dev\/sitemap\.xml/);
+  assert.match(sitemapSource, /<loc>https:\/\/fifteenshowreel\.pages\.dev\/<\/loc>/);
+  assert.match(manifestSource, /"name"\s*:\s*"FifteenShowreel"/);
 });
 
 test("人物图与所有作品卡片使用轻量网页资源", () => {
