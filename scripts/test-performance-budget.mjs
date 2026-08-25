@@ -54,6 +54,7 @@ test("首屏使用为网页交付压缩的 showreel", () => {
   assert.doesNotMatch(introSource, /gsap\.to\(overlay,\s*\{\s*autoAlpha: 0/);
   assert.match(introCss, /intro-overlay__curtain/);
   assert.match(heroSource, /data-motion="hero-title"/);
+  assert.match(heroSource, /hero-statement-en/);
   assert.match(heroSource, /heroHandoff/);
   assert.doesNotMatch(heroSource, /animateOn="view"/);
   assert.match(
@@ -73,6 +74,8 @@ test("手机端首屏完整显示 16:9 视频画幅", () => {
   assert.match(heroSource, /preload=\{active \? "auto" : "none"\}/);
   assert.match(heroSource, /src=\{active \? heroVideoSrc : undefined\}/);
   assert.match(heroSource, /onCanPlay=\{syncHeroPlayback\}/);
+  assert.match(heroCss, /\.hero-title-mask,[\s\S]*overflow: visible/);
+  assert.match(heroCss, /white-space: nowrap/);
   assert.match(heroSource, /touchstart/);
   assert.doesNotMatch(heroSource, /hero-video-play/);
   assert.match(mobileRules, /\.hero-video\s*\{[\s\S]*?object-fit:\s*contain;/);

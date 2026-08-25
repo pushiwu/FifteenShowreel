@@ -148,7 +148,8 @@ export default function Hero({ active = true, heroHandoff = false }) {
 
         <div className="hero-meta-right">
           <p data-motion="hero-meta" className="hero-statement">
-            当下的状态，先于陈述。状态一旦精准，故事便自由延展。
+            <span className="hero-statement-zh">当下的状态，先于陈述。状态一旦精准，故事便自由延展。</span>
+            <span className="hero-statement-en">State comes before statement. When it is precise, the story can unfold freely.</span>
           </p>
         </div>
       </div>
