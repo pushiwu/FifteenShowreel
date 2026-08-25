@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "./DitWorkflow.css";
 
@@ -41,24 +41,43 @@ const workflowStages = [
 
 export default function DitWorkflow() {
   const [isOpen, setIsOpen] = useState(false);
+  const triggerRef = useRef(null);
+  const closeRef = useRef(null);
 
   useEffect(() => {
     if (!isOpen) return undefined;
     const previousOverflow = document.body.style.overflow;
+    const trigger = triggerRef.current;
     document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
     const handleKeydown = (event) => {
       if (event.key === "Escape") setIsOpen(false);
+      if (event.key !== "Tab") return;
+      const dialog = closeRef.current?.closest("[role=dialog]");
+      const focusable = dialog?.querySelectorAll("a[href], button:not([disabled])");
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", handleKeydown);
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeydown);
+      trigger?.focus();
     };
   }, [isOpen]);
 
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         className="dit-workflow-trigger"
         onClick={() => setIsOpen(true)}
@@ -92,7 +111,7 @@ export default function DitWorkflow() {
                 <a href="/DIT工作流一览.pdf" target="_blank" rel="noreferrer">
                   PDF / 完整图
                 </a>
-                <button type="button" onClick={() => setIsOpen(false)} aria-label="关闭工作流">
+                <button ref={closeRef} type="button" onClick={() => setIsOpen(false)} aria-label="关闭工作流">
                   <span aria-hidden="true">×</span>
                   <span>Close</span>
                 </button>

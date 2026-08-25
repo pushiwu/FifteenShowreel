@@ -58,6 +58,9 @@ jobs:
       - name: Validate project data
         run: npm run test:data
 
+      - name: Lint source files
+        run: npm run lint
+
       - name: Validate project assets
         run: npm run test:assets
 
@@ -75,6 +78,9 @@ jobs:
 
       - name: Validate DIT workflow
         run: npm run test:dit-workflow
+
+      - name: Validate clipboard fallback
+        run: npm run test:clipboard
 
       - name: Build production website
         run: npm run build

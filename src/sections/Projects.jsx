@@ -124,6 +124,7 @@ export default function Projects() {
   const projectsSectionRef = useRef(null);
   const modalVideoRef = useRef(null);
   const hlsRef = useRef(null);
+  const modalTriggerRef = useRef(null);
 
   const visibleProjects = useMemo(() => {
     if (viewMode === "all") {
@@ -225,10 +226,25 @@ export default function Projects() {
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    requestAnimationFrame(() => document.querySelector(".projects-modal-close")?.focus());
 
     const handleKeydown = (event) => {
       if (event.key === "Escape") {
         setOpenedProjectId(null);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const dialog = document.querySelector(".projects-modal[role=dialog]");
+      const focusable = dialog?.querySelectorAll("a[href], button:not([disabled]), video[controls]");
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
 
@@ -236,6 +252,7 @@ export default function Projects() {
     return () => {
       window.removeEventListener("keydown", handleKeydown);
       document.body.style.overflow = previousOverflow;
+      modalTriggerRef.current?.focus?.();
     };
   }, [openedProjectId]);
 
@@ -326,6 +343,7 @@ export default function Projects() {
 
   const handleProjectClick = (project, index) => {
     setActiveIndex(index);
+    modalTriggerRef.current = document.activeElement;
     setOpenedProjectId(project.id);
   };
 

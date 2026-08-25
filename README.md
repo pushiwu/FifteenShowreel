@@ -57,7 +57,7 @@ npm.cmd run build
 
 ```powershell
 npm.cmd run build
-npx wrangler pages deploy dist --project-name fifteen-showreel
+npx wrangler pages deploy dist --project-name fifteenshowreel
 ```
 
 ## 媒体规则

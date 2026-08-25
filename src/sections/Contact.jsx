@@ -1,16 +1,17 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import GlareHover from "../components/GlareHover";
 import { getMotionSettings, MOTION_EASES } from "../utils/motionSystem";
+import { copyText } from "../utils/clipboard";
 import "./Contact.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const methods = [
   { label: "\u90ae\u7bb1", value: "2493627661@qq.com", href: "mailto:2493627661@qq.com" },
-  { label: "\u5fae\u4fe1", value: "17674570906", href: "#" },
+  { label: "\u5fae\u4fe1", value: "17674570906", copyable: true },
   {
     label: "\u5c0f\u7ea2\u4e66",
     value: "Fifteen Pu",
@@ -23,6 +24,17 @@ export default function Contact() {
   const wrapperRef = useRef(null);
   const giantTextRef = useRef(null);
   const contentRef = useRef(null);
+  const [copyState, setCopyState] = useState("idle");
+  const copyTimerRef = useRef(null);
+
+  const handleCopyWechat = async () => {
+    const copied = await copyText("17674570906");
+    setCopyState(copied ? "success" : "failure");
+    window.clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = window.setTimeout(() => setCopyState("idle"), 2200);
+  };
+
+  useLayoutEffect(() => () => window.clearTimeout(copyTimerRef.current), []);
 
   useLayoutEffect(() => {
     const wrapper = wrapperRef.current;
@@ -150,9 +162,11 @@ export default function Contact() {
             {methods.map((item) => (
               <div data-contact-motion="method" className="contact-method-motion" key={item.label}>
                 <GlareHover
-                as="a"
+                as={item.copyable ? "button" : "a"}
                 className="contact-method"
-                href={item.href}
+                href={item.copyable ? undefined : item.href}
+                type={item.copyable ? "button" : undefined}
+                onClick={item.copyable ? handleCopyWechat : undefined}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noopener noreferrer" : undefined}
                 width="100%"
@@ -168,6 +182,11 @@ export default function Contact() {
               >
                 <span className="contact-method-label">{item.label}</span>
                 <span className="contact-method-value">{item.value}</span>
+                {item.copyable ? (
+                  <span className={`contact-copy-status is-${copyState}`} role="status" aria-live="polite">
+                    {copyState === "success" ? "已复制" : copyState === "failure" ? "请手动复制" : "点击复制"}
+                  </span>
+                ) : null}
                 </GlareHover>
               </div>
             ))}
@@ -198,7 +217,7 @@ export default function Contact() {
 
           <div data-contact-motion="supporting" className="contact-bottom">
             <p className="contact-footer">
-              FifteenShowreel v1.0 | Updated August 14, 2026
+              FifteenShowreel v1.0 | Updated August 25, 2026
             </p>
             <button
               className="contact-top"
