@@ -129,11 +129,11 @@ export default function Hero({ active = true, heroHandoff = false }) {
         <div className="hero-light" />
 
         <div className="hero-meta-left">
-          <p data-motion="hero-meta" className="hero-eyebrow">State before statement.</p>
+          <p data-motion="hero-meta" className="hero-eyebrow">Presence before explanation.</p>
         </div>
 
         <div className="hero-copy">
-          <p data-motion="hero-support" className="hero-kicker">Fifteen Personal Portfolio</p>
+          <p data-motion="hero-support" className="hero-kicker">Fifteen Pu / Cinematography Portfolio</p>
           <div className="hero-title-mask">
             <h1 data-motion="hero-title" className="hero-title">蒲师武</h1>
           </div>
@@ -149,7 +149,7 @@ export default function Hero({ active = true, heroHandoff = false }) {
         <div className="hero-meta-right">
           <p data-motion="hero-meta" className="hero-statement">
             <span className="hero-statement-zh">当下的状态，先于陈述。状态一旦精准，故事便自由延展。</span>
-            <span className="hero-statement-en">State comes before statement. When it is precise, the story can unfold freely.</span>
+            <span className="hero-statement-en">Presence comes before explanation. When the moment feels true, the story can unfold naturally.</span>
           </p>
         </div>
       </div>

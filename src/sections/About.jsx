@@ -13,15 +13,15 @@ const overviewLinks = [
 const statementParagraphs = [
   {
     zh: "我始终相信，当下的状态先于陈述。许多真正动人的东西，并不急于被说明，它首先停留在人的神情、动作、停顿与沉默里。当状态被准确捕捉，故事便会自然生长。",
-    en: "I have always believed that the state of the present precedes explanation. What truly moves us rarely rushes to be articulated; it first remains in a person's expression, movement, pause and silence. When that state is captured precisely, the story begins to grow on its own.",
+    en: "I have always believed that presence comes before explanation. What truly moves us does not need to be explained at once. It first reveals itself in a person's expression, movement, pause and silence. When that presence is captured truthfully, the story begins to unfold on its own.",
   },
   {
     zh: "比起直接解释人物，我更在意画面中人与环境之间的关系。对我来说，镜头不是为了展示，而是为了留下日常中转瞬即逝的时刻：光线掠过面孔时的迟疑，空间沉默下来时的张力，以及情绪尚未来得及命名便已外溢的痕迹。",
-    en: "Rather than explaining a character directly, I care more about the relationship between people and their surroundings within the frame. For me, the camera is not there to display, but to preserve moments that vanish almost as soon as they appear: hesitation as light crosses a face, tension as a space falls silent, and emotion spilling outward before it can be named.",
+    en: "Rather than explaining a character outright, I am more interested in the relationship between people and their surroundings within the frame. The camera is not merely a way to show something; it is a way to hold on to moments that disappear almost as soon as they arrive: hesitation as light passes across a face, tension as a room falls silent, and emotion spilling over before it can be named.",
   },
   {
     zh: "人物常常是环境的结果，而环境也不仅是空间本身，它包含光线、空气、声音，以及情绪在其中流动的方式。创作不是套用固定的方法，而是在具体的人、空间与情绪之中，找到那个故事真正适合被观看的方式。",
-    en: "People are often shaped by their environments, and environment is more than physical space. It includes light, air, sound and the way emotion moves through them. Creation is not the application of a fixed method, but the search, within a specific person, space and feeling, for the way a story truly asks to be seen.",
+    en: "People are shaped by their surroundings, and a setting is more than physical space. It includes light, air, sound and the way emotion moves through it. I do not impose a fixed method. I look for the form in which each story wants to be seen.",
   },
 ];
 
@@ -82,7 +82,7 @@ export default function About() {
                   canvasOpacity={0.22}
                 />
                 <span data-motion="meta" className="about-visual-caption">
-                  Cinematographer / Gaffer / Camera Operator / 1st AC / DIT
+                  Director of Photography / Gaffer / Camera Operator / First Assistant Camera / Digital Imaging Technician
                 </span>
               </div>
             </div>

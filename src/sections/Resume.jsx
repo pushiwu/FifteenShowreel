@@ -10,7 +10,7 @@ const awards = [
   ["第十一届湖南省大学生公益广告大赛二等奖", "Second Prize, 11th Hunan Provincial College Student Public Service Advertising Competition"],
   ["第十届湖南省大学生公益广告大赛二等奖", "Second Prize, 10th Hunan Provincial College Student Public Service Advertising Competition"],
   ["入围金鹄青年电影节", "Official Selection, Jinhu Youth Film Festival"],
-  ["入围“极光之夜”大学生微电影嘉年华", "Official Selection, Aurora Night College Student Microfilm Carnival"],
+  ["入围“极光之夜”大学生微电影嘉年华", "Official Selection, Aurora Night College Student Short Film Carnival"],
   ["第十八届全国大学生广告艺术大赛视频类微电影广告湖南省三等奖", "Third Prize, Video (Micro-Film Advertising), Hunan Division, 18th National Advertising Art Design Competition for College Students"],
 ].map(([zh, en]) => ({ zh, en }));
 
@@ -28,7 +28,7 @@ export default function Resume() {
           </div>
           <div className="resume-content">
             <div data-motion="meta" className="resume-profile-line">
-              <span>Fifteen Pu</span><span>Cinematographer / Gaffer / Camera Operator / 1st AC / DIT</span>
+              <span>Fifteen Pu</span><span>Director of Photography / Gaffer / Camera Operator / First Assistant Camera / Digital Imaging Technician</span>
             </div>
             <div data-motion="cards" className="resume-awards">
               {awards.map((award, index) => (
