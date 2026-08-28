@@ -105,7 +105,7 @@ test("新增视频项目拥有完整双语资料并从全部项目进入播放�
       institution: "湖南应用技术学院",
       institutionEn: "Hunan Applied Technology University",
       format: "微电影广告",
-      formatEn: "Microfilm Advertisement",
+      formatEn: "Commercial Short Film",
     },
     {
       title: "逐光",
@@ -115,7 +115,7 @@ test("新增视频项目拥有完整双语资料并从全部项目进入播放�
       institution: "商业项目",
       institutionEn: "Commercial Project",
       format: "微电影公益广告",
-      formatEn: "Public Service Microfilm",
+      formatEn: "Public Service Short Film",
     },
   ];
 
