@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GlareHover from "../components/GlareHover";
 import { getMotionSettings, MOTION_EASES } from "../utils/motionSystem";
 import { copyText } from "../utils/clipboard";
+import packageJson from "../../package.json";
 import "./Contact.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -217,7 +218,7 @@ export default function Contact() {
 
           <div data-contact-motion="supporting" className="contact-bottom">
             <p className="contact-footer">
-              FifteenShowreel v1.0 | Updated August 25, 2026
+              FifteenShowreel v{packageJson.version}
             </p>
             <button
               className="contact-top"

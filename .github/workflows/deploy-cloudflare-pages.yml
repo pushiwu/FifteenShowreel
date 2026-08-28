@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
   deployments: write
 
 jobs:
@@ -54,6 +54,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Prepare next release version
+        run: node scripts/prepare-release-version.mjs
+        env:
+          RELEASE_COMMIT: ${{ github.sha }}
 
       - name: Validate project data
         run: npm run test:data
@@ -120,3 +125,14 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=fifteenshowreel --branch=main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Persist release version and notes
+        if: success()
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json RELEASE_NOTES.md
+          version=$(node -p "require('./package.json').version")
+          git commit -m "chore: release v${version} [skip ci]"
+          git push origin HEAD:main
