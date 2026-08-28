@@ -1,6 +1,6 @@
 # FifteenShowreel
 
-蒲师武个人影像作品集，部署上线版本 `1.0.0`。网站以 React、Vite、GSAP 与 Canvas2D 构建，包含电影化 opening、滚动叙事、动态人物 ASCII 轮廓及项目视频播放页。
+蒲师武个人影像作品集，当前由 `main` 分支持续维护。网站以 React、Vite、GSAP 与 Canvas2D 构建，包含电影化 opening、滚动叙事、动态人物 ASCII 轮廓及项目视频播放页。历史上线基线保留为 `v1.0.0`，当前主线最新维护提交为 `a439094`。
 
 ## 本地运行
 
@@ -69,4 +69,4 @@ npx wrangler pages deploy dist --project-name fifteenshowreel
 
 ## 版本说明
 
-完整更新内容见 [RELEASE_NOTES.md](./RELEASE_NOTES.md)。
+完整更新内容见 [RELEASE_NOTES.md](./RELEASE_NOTES.md)，其中包含 `v1.0.0` 之后的逐提交维护记录。
