@@ -60,6 +60,12 @@ jobs:
         env:
           RELEASE_COMMIT: ${{ github.sha }}
 
+      - name: Snapshot release metadata
+        shell: bash
+        run: |
+          mkdir -p .release-metadata
+          cp package.json package-lock.json RELEASE_NOTES.md .release-metadata/
+
       - name: Validate project data
         run: npm run test:data
 
@@ -130,6 +136,9 @@ jobs:
         if: success()
         shell: bash
         run: |
+          cp .release-metadata/package.json package.json
+          cp .release-metadata/package-lock.json package-lock.json
+          cp .release-metadata/RELEASE_NOTES.md RELEASE_NOTES.md
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package.json package-lock.json RELEASE_NOTES.md
