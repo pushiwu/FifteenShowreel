@@ -126,6 +126,8 @@ test("奖项按含金量排序并使用核验后的英文名称", () => {
   const resumeSource = readFileSync(path.join(root, "src/sections/Resume.jsx"), "utf8");
   const expectedOrder = [
     "入围罗德岛国际电影节半决赛",
+    "入围雅典国际月度艺术电影节决赛",
+    "入围33独立影展，并获最佳短片、最佳编剧提名",
     "入围多伦多国际诺莱坞电影节",
     "第十七届全国大学生广告艺术大赛视频类微电影广告湖南省一等奖",
     "入围亚洲国际青年电影节",
@@ -145,6 +147,8 @@ test("奖项按含金量排序并使用核验后的英文名称", () => {
   }
 
   assert.match(resumeSource, /Semi-Finalist, Flickers' Rhode Island International Film Festival/);
+  assert.match(resumeSource, /Finalist, Athens International Monthly Art Film Festival/);
+  assert.match(resumeSource, /Official Selection; Nominated for Best Short Film and Best Screenplay, 33 International Film Festival/);
   assert.match(resumeSource, /Official Selection, Asia International Youth Film Festival/);
   assert.match(resumeSource, /National Advertising Art Design Competition for College Students/);
   assert.doesNotMatch(resumeSource, /Asian International Youth Film Festival/);
