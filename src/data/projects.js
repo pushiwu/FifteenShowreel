@@ -1,3 +1,8 @@
+const mumusRoadGalleryImages = Array.from(
+  { length: 12 },
+  (_, index) => `/projects/mumus-road/${String(index + 1).padStart(2, "0")}.webp`,
+);
+
 const wenjiGalleryImages = [
   "/projects/wenji/01.jpg",
   "/projects/wenji/02.jpg",
@@ -141,6 +146,20 @@ const projectRecords = [
     image: "/projects/distant-mountains/distant-mountains-poster.jpg",
     poster: "/projects/distant-mountains/distant-mountains-poster.jpg",
     video: "/projects/distant-mountains/distant-mountains.mp4",
+  },
+  {
+    id: 34,
+    layer: "core",
+    title: "木木的路",
+    titleEn: "Mumu's Road",
+    role: "摄影指导",
+    roleEn: "Director of Photography",
+    institution: "武汉传媒学院",
+    institutionEn: "Wuhan University of Communication",
+    format: "实验短片",
+    formatEn: "Experimental Short Film",
+    image: mumusRoadGalleryImages[4],
+    galleryImages: mumusRoadGalleryImages,
   },
   {
     id: 8,

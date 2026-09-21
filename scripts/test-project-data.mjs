@@ -41,6 +41,31 @@ test("已确认的画廊项目拥有完整双语资料和可访问素材", () =>
     }
   }
 });
+
+test("木木的路作为核心组图项目展示完整双语资料", () => {
+  const project = projectByTitle("木木的路");
+
+  assert.ok(project, "Missing project: 木木的路");
+  assert.equal(project.layer, "core");
+  assert.equal(project.titleEn, "Mumu's Road");
+  assert.equal(project.role, "摄影指导");
+  assert.equal(project.roleEn, "Director of Photography");
+  assert.equal(project.institution, "武汉传媒学院");
+  assert.equal(project.institutionEn, "Wuhan University of Communication");
+  assert.equal(project.format, "实验短片");
+  assert.equal(project.formatEn, "Experimental Short Film");
+  assert.equal(project.galleryImages.length, 12);
+  assert.equal(project.image, "/projects/mumus-road/05.webp");
+
+  for (const image of project.galleryImages) {
+    assert.equal(
+      existsSync(resolve(process.cwd(), "public", image.slice(1))),
+      true,
+      `Missing gallery image for 木木的路: ${image}`,
+    );
+  }
+});
+
 test("文字资料项目不伪造媒体资源并仍可被全部项目展示", () => {
   const textOnlyTitles = [
     "异日伙伴",
