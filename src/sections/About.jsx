@@ -3,11 +3,13 @@ import AsciiPortrait from "../components/AsciiPortrait";
 import GlareHover from "../components/GlareHover";
 import SectionMotion from "../components/SectionMotion";
 import { ABOUT_PORTRAIT_CONFIG } from "../utils/asciiPortrait";
+import { projects } from "../data/projects";
+import { awards } from "../data/awards";
 
 const overviewLinks = [
-  { href: "#projects", number: "03", zh: "核心作品", en: "Selected Works" },
+  { href: "#projects", number: String(projects.filter((project) => project.layer === "core").length).padStart(2, "0"), zh: "核心作品", en: "Selected Works" },
   { href: "#expertise", number: "04", zh: "工作维度", en: "Working Dimensions" },
-  { href: "#resume", number: "10", zh: "奖项与入围", en: "Awards & Selections" },
+  { href: "#resume", number: String(awards.length).padStart(2, "0"), zh: "奖项与入围", en: "Awards & Selections" },
 ];
 
 const statementParagraphs = [

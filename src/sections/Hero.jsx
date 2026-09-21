@@ -138,7 +138,7 @@ export default function Hero({ active = true, heroHandoff = false }) {
             <h1 data-motion="hero-title" className="hero-title">蒲师武</h1>
           </div>
           <div className="hero-name-mask">
-            <p data-motion="hero-english" className="hero-name-en">fifteen</p>
+            <p data-motion="hero-english" className="hero-name-en">Fifteen Pu</p>
           </div>
           <div data-motion="hero-support" className="hero-role-block">
             <p className="hero-role-zh">摄影指导 / Director of Photography</p>

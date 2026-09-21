@@ -116,14 +116,14 @@ test("项目视频支持 R2 HLS 并保留 MP4 回退", () => {
 });
 
 test("履历使用正确的金鹄青年电影节名称", () => {
-  const resumeSource = readFileSync(path.join(root, "src/sections/Resume.jsx"), "utf8");
+  const resumeSource = readFileSync(path.join(root, "src/data/awards.js"), "utf8");
 
   assert.match(resumeSource, /入围金鹄青年电影节/);
   assert.doesNotMatch(resumeSource, /金鹅青年电影节/);
 });
 
 test("奖项按含金量排序并使用核验后的英文名称", () => {
-  const resumeSource = readFileSync(path.join(root, "src/sections/Resume.jsx"), "utf8");
+  const resumeSource = readFileSync(path.join(root, "src/data/awards.js"), "utf8");
   const expectedOrder = [
     "入围罗德岛国际电影节半决赛",
     "入围雅典国际月度艺术电影节决赛",

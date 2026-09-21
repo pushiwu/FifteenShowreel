@@ -71,6 +71,33 @@
   line-height: 1.6;
 }
 
+.resume-more-awards summary {
+  padding: 20px 0;
+  color: var(--text-primary);
+  font-size: 12px;
+  line-height: 1.8;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.resume-more-awards summary::marker {
+  color: var(--accent);
+}
+
+.resume-more-awards summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.resume-awards-collapse,
+.resume-more-awards[open] .resume-awards-expand {
+  display: none;
+}
+
+.resume-more-awards[open] .resume-awards-collapse {
+  display: inline;
+}
+
 @media (max-width: 900px) {
   .resume {
     padding: 88px 0;

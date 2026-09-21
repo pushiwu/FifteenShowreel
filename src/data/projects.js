@@ -133,6 +133,42 @@ const getVideoSegments = (slug, count) =>
 
 const projectRecords = [
   {
+    id: 34,
+    layer: "core",
+    title: "木木的路",
+    titleEn: "Mumu's Road",
+    role: "摄影指导",
+    roleEn: "Director of Photography",
+    institution: "武汉传媒学院",
+    institutionEn: "Wuhan University of Communication",
+    format: "实验短片",
+    formatEn: "Experimental Short Film",
+    image: mumusRoadGalleryImages[4],
+    galleryImages: mumusRoadGalleryImages,
+    note: "我希望从汽车“木木”的视角观察一段关系：借车窗的框架、玻璃倒影和行驶中变化的光线，让两个人在同一空间里的距离慢慢显现。",
+    noteEn: "I wanted to observe a relationship from the perspective of Mumu, the couple's car. Window frames, reflections and shifting light would gradually reveal the distance between two people sharing the same space.",
+    cinematography: [
+      {
+        title: "有限的观看",
+        titleEn: "A limited point of view",
+        zh: "摄影机的观看范围受到车身结构的限制。我希望用相对固定的镜头，让车窗、后视镜和挡风玻璃参与构图；人物的遮挡、倒影与错开的视线，承载那些没有说出口的情绪。画面无法看见的事情，则交给引擎声、车门声和脚步声。",
+        en: "The car's structure sets the limits of what the camera can see. I wanted to keep the camera largely fixed, using windows, mirrors and the windshield to frame the couple. Obstructions, reflections and glances that never meet would carry their unspoken feelings. Engine noise, closing doors and footsteps would tell us what happens out of frame.",
+      },
+      {
+        title: "光线与时间",
+        titleEn: "Light and the passage of time",
+        zh: "前两场的设想以灰绿、橄榄绿和少量黄色为基础，保持柔和、自然的光线。树影、云层和经过的车灯短暂改变人物脸上的亮度，黄昏逐渐转入蓝灰色夜晚，让天色的变化推进情绪。",
+        en: "For the first two scenes, I envisaged muted grey-greens and olive tones with small touches of yellow, under soft, natural light. Tree shadows, clouds and passing headlights would briefly change the light on the actors' faces. As dusk gives way to a blue-grey night, the changing light would carry the emotional shift.",
+      },
+      {
+        title: "重新上路",
+        titleEn: "Back on the road",
+        zh: "尾声的摄影构想转为黑白，以行车记录仪式的固定视角面对前方。摄影机不追随离开的人，也不靠近留下的人；只让声音、人物轮廓与重新移动的道路，呈现关系结束后仍在继续的生活。",
+        en: "I conceived the final scene in black and white, with a fixed, forward-facing view like a dashcam. The camera would neither follow the person leaving nor move closer to the one who stays. Sound, silhouettes and the road beginning to move again would convey life continuing after the relationship ends.",
+      },
+    ],
+  },
+  {
     id: 29,
     layer: "core",
     title: "远山不扰",
@@ -146,20 +182,6 @@ const projectRecords = [
     image: "/projects/distant-mountains/distant-mountains-poster.jpg",
     poster: "/projects/distant-mountains/distant-mountains-poster.jpg",
     video: "/projects/distant-mountains/distant-mountains.mp4",
-  },
-  {
-    id: 34,
-    layer: "core",
-    title: "木木的路",
-    titleEn: "Mumu's Road",
-    role: "摄影指导",
-    roleEn: "Director of Photography",
-    institution: "武汉传媒学院",
-    institutionEn: "Wuhan University of Communication",
-    format: "实验短片",
-    formatEn: "Experimental Short Film",
-    image: mumusRoadGalleryImages[4],
-    galleryImages: mumusRoadGalleryImages,
   },
   {
     id: 8,

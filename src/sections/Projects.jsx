@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
 import GlareHover from "../components/GlareHover";
 import OrbitImages from "../components/OrbitImages";
 import SectionMotion from "../components/SectionMotion";
@@ -101,6 +102,7 @@ export default function Projects() {
   const [viewMode, setViewMode] = useState("core");
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isAutoplayStopped, setIsAutoplayStopped] = useState(false);
   const [openedProjectId, setOpenedProjectId] = useState(null);
   const [videoSegmentIndex, setVideoSegmentIndex] = useState(0);
   const [isDocumentVisible, setIsDocumentVisible] = useState(
@@ -190,7 +192,7 @@ export default function Projects() {
 
   useEffect(() => {
     if (!shouldRunProjectAutoplay({
-      isPaused,
+      isPaused: isPaused || isAutoplayStopped,
       isDocumentVisible,
       isSectionInView,
       isCompactAllView: viewMode === "all" && isCompactViewport,
@@ -215,6 +217,7 @@ export default function Projects() {
     isSectionInView,
     isCompactViewport,
     isPaused,
+    isAutoplayStopped,
     openedProjectId,
     prefersReducedMotion,
     viewMode,
@@ -235,7 +238,7 @@ export default function Projects() {
       }
       if (event.key !== "Tab") return;
       const dialog = document.querySelector(".projects-modal[role=dialog]");
-      const focusable = dialog?.querySelectorAll("a[href], button:not([disabled]), video[controls]");
+      const focusable = dialog?.querySelectorAll("a[href], button:not([disabled]), summary, video[controls]");
       if (!focusable?.length) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
@@ -351,6 +354,13 @@ export default function Projects() {
     if (nextViewMode === viewMode) return;
     setActiveIndex(0);
     setViewMode(nextViewMode);
+  };
+
+  const stepProject = (step) => {
+    setIsAutoplayStopped(true);
+    setActiveIndex((current) =>
+      (getSafeActiveIndex(current, visibleProjects.length) + step + visibleProjects.length) % visibleProjects.length,
+    );
   };
 
   const handleStageMouseEnter = () => {
@@ -620,6 +630,17 @@ export default function Projects() {
             />
           </div>
 
+          <div className="projects-navigation" aria-label="作品切换 / Project navigation">
+            <button type="button" onClick={() => stepProject(-1)} aria-label="上一部作品 / Previous project" title="上一部作品 / Previous project"><ArrowLeft size={20} aria-hidden="true" /></button>
+            <span>{String(safeActiveIndex + 1).padStart(2, "0")} / {String(visibleProjects.length).padStart(2, "0")}</span>
+            <button type="button" onClick={() => stepProject(1)} aria-label="下一部作品 / Next project" title="下一部作品 / Next project"><ArrowRight size={20} aria-hidden="true" /></button>
+            {!prefersReducedMotion && !(viewMode === "all" && isCompactViewport) ? (
+              <button type="button" onClick={() => setIsAutoplayStopped((stopped) => !stopped)} aria-label={isAutoplayStopped ? "自动轮播 / Start slideshow" : "暂停轮播 / Pause slideshow"} title={isAutoplayStopped ? "自动轮播 / Start slideshow" : "暂停轮播 / Pause slideshow"}>
+                {isAutoplayStopped ? <Play size={18} aria-hidden="true" /> : <Pause size={18} aria-hidden="true" />}
+              </button>
+            ) : null}
+          </div>
+
           <div className="projects-stage-copy">
             <p data-motion="title" className="motion-display-title projects-stage-display">
               SELECTED WORKS
@@ -628,7 +649,7 @@ export default function Projects() {
               {"\u4f5c\u54c1"}
             </h2>
             <p data-motion="copy" className="projects-stage-subtitle">
-              Selected works / Image, light, space and the state between them
+              影像、光线与人物 / Images, light and people
             </p>
           </div>
 
@@ -746,6 +767,26 @@ export default function Projects() {
                   Back / {"\u8fd4\u56de"}
                 </button>
 
+                {openedProject.cinematography ? (
+                  <section className="projects-cinematography" aria-label="摄影阐述 / Cinematography">
+                    <h3>{openedProject.title} <span>{openedProject.titleEn}</span></h3>
+                    <p>{openedProject.note}</p>
+                    <p lang="en">{openedProject.noteEn}</p>
+                    <details>
+                      <summary>摄影阐述 / Cinematography</summary>
+                      <div className="projects-cinematography-sections">
+                        {openedProject.cinematography.map((section) => (
+                          <section key={section.title}>
+                            <h4>{section.title}<span>{section.titleEn}</span></h4>
+                            <p>{section.zh}</p>
+                            <p lang="en">{section.en}</p>
+                          </section>
+                        ))}
+                      </div>
+                    </details>
+                  </section>
+                ) : null}
+
                 <div className="projects-modal-media">
                   {openedProject.galleryImages ? (
                     <div className="projects-modal-gallery">
@@ -804,7 +845,7 @@ export default function Projects() {
                     </p>
                     <h3 className="projects-modal-title">{openedProject.title}</h3>
                     <p className="projects-modal-title-en">{openedProject.titleEn}</p>
-                    {openedProject.note ? (
+                    {openedProject.note && !openedProject.cinematography ? (
                       <div className="projects-modal-statement">
                         <p>{openedProject.note}</p>
                         {openedProject.noteEn ? <p>{openedProject.noteEn}</p> : null}
